@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forex Market Alerts</title>
+
+  <!-- Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app" class="layout">
+
+  <!───────────────── SIDEBAR ────────────────>
+  <aside id="sidebar" class="sidebar">
+    <button id="hamburger" class="hamburger"><i data-feather="menu"></i></button>
+
+    <div class="profile-block">
+      <div class="avatar"><i data-feather="user"></i></div>
+      <h3>Trader Profile</h3><p class="email">user@ai.forex</p>
+    </div>
+
+    <nav class="side-nav">
+      <button data-page="rates"><i data-feather="smartphone"></i><span>Forex Rates</span></button>
+      <button data-page="macro"><i data-feather="trending-up"></i><span>Macro + Chart</span></button>
+      <button data-page="portfolio"><i data-feather="folder"></i><span>Portfolio Sim.</span></button>
+      <button data-page="settings"><i data-feather="settings"></i><span>Settings</span></button>
+    </nav>
+  </aside>
+
+  <!───────────────── MAIN ────────────────>
+  <main class="main">
+
+    <!── 1. PRICE CARDS ──>
+    <section id="rates" class="page active">
+      <header class="hero">
+        <h1>Forex Trade Explorer</h1>
+        <p>Track key metrics &amp; real-time AI-driven strategies</p>
+      </header>
+
+      <div class="rates-grid">
+        <article class="card" data-pair="EURUSD">
+          <h3>EUR/USD</h3>
+          <p class="rate">Price <span class="price">--</span></p>
+          <p class="sma">SMA-20 <span>--</span></p>
+          <p class="rsi">RSI-14 <span>--</span></p>
+        </article>
+
+        <article class="card red" data-pair="USDJPY">
+          <h3>USD/JPY</h3>
+          <p class="rate">Price <span class="price">--</span></p>
+          <p class="sma">SMA-20 <span>--</span></p>
+          <p class="rsi">RSI-14 <span>--</span></p>
+        </article>
+
+        <article class="card green wide" data-pair="GBPUSD">
+          <h3>GBP/USD</h3>
+          <p class="rate">Price <span class="price">--</span></p>
+          <p class="sma">SMA-20 <span>--</span></p>
+          <p class="rsi">RSI-14 <span>--</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!── 2. MACRO + CHART ──>
+    <section id="macro" class="page macro-wrap">
+      <div class="macro-box">
+        <h2>Macro Events &amp; Metrics</h2>
+        <table class="macro-table">
+          <thead><tr><th>Pair</th><th>Vol.</th><th>Rate Δ</th><th>Event</th></tr></thead>
+          <tbody>
+            <tr><td>EUR/USD</td><td>8.2 %</td><td class="down">-0.75 %</td><td>ECB Rate Decision</td></tr>
+            <tr><td>USD/JPY</td><td>7.8 %</td><td class="up">+2.1 %</td><td>BoJ Press Conf.</td></tr>
+            <tr><td>GBP/USD</td><td>5.9 %</td><td class="down">-0.25 %</td><td>UK Inflation Data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-box">
+        <!-- TradingView iframe -->
+        <iframe id="tvChart"
+          src="https://s.tradingview.com/widgetembed/?symbol=FX%3AEURUSD&interval=30&theme=dark&style=1"
+          style="width:100%;height:420px;border:none" scrolling="no"></iframe>
+      </div>
+    </section>
+
+    <!── 3. PORTFOLIO SIM ──>
+    <section id="portfolio" class="page port-sim">
+      <div class="port-header">
+        <h2>Forex Portfolio Simulator</h2>
+        <label class="toggle">
+          <input type="checkbox" id="aiPortToggle" />
+          <span class="slider"></span><span class="label-text">AI Assist</span>
+        </label>
+      </div>
+
+      <p class="subline">Enter position details and let AI suggest a strategy.</p>
+
+      <form id="portForm" class="port-form">
+        <label>Pair
+          <select id="pPair">
+            <option>EUR/USD</option><option>USD/JPY</option>
+            <option>GBP/USD</option><option>USD/CAD</option>
+            <option>AUD/USD</option>
+          </select>
+        </label>
+        <label>Entry Price <input type="number" id="pEntry" step="0.0001" required></label>
+        <label>Current Price <input type="number" id="pCurrent" step="0.0001" required></label>
+        <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
+        <button type="submit">Add Position</button>
+      </form>
+
+      <div id="portGrid" class="port-grid"></div>
+    </section>
+
+    <!── 4. SETTINGS ──>
+    <section id="settings" class="page settings">
+      <h2>Settings</h2>
+      <label class="toggle"><input type="checkbox" id="matrixToggle"><span class="slider"></span><span class="label-text">Matrix Theme</span></label>
+      <label class="toggle"><input type="checkbox" id="blurToggle"><span class="slider"></span><span class="label-text">Blur Screen</span></label>
+    </section>
+  </main>
+
+  <!── bottom bar (mobile) ──>
+  <nav class="bottom-bar">
+    <button data-page="rates"><i data-feather="smartphone"></i></button>
+    <button data-page="macro"><i data-feather="trending-up"></i></button>
+    <button data-page="portfolio"><i data-feather="folder"></i></button>
+  </nav>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
