@@ -1,0 +1,275 @@
+
+/************************************
+  Forex Simulator – COMPLETE STYLES
+  (2025-06 update)
+************************************/
+
+/* ───────────────── PALETTE ───────────────── */
+:root{
+  --bg:#001323;           /* main background */
+  --panel:#071b2d;        /* cards / sidebar */
+  --border:#132942;
+  --accent:#00d1ff;       /* neon-blue accent */
+  --txt:#e8f1ff;          /* primary text */
+  --sub:#6bbde0;          /* secondary text */
+  --up:#20e0a0;           /* green up color */
+  --down:#ff4f7e;         /* red down color */
+}
+/* “Matrix” override */
+body.matrix{
+  --bg:#000;
+  --panel:#010a02;
+  --border:#0f3f12;
+  --accent:#23ff23;
+  --txt:#23ff23;
+  --sub:#46c146;
+  --up:#7dff7d;
+  /* keep red for losses */
+}
+/* Matrix gradient surface */
+body.matrix .card,
+body.matrix .sidebar,
+body.matrix .bottom-bar,
+body.matrix .macro-table,
+body.matrix .chart-box,
+body.matrix .port-card,
+body.matrix .profile-block{
+  background:linear-gradient(145deg,#010a02 0%,#001503 100%);
+}
+
+/* ───────────────── GLOBAL RESET ───────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  line-height:1.4;
+}
+
+/* ───────────────── BLUR MODE ───────────────── */
+body.blurred .sidebar,
+body.blurred .main,
+body.blurred .bottom-bar{
+  filter:blur(6px);
+  pointer-events:none;
+  user-select:none;
+}
+body.blurred::after{
+  content:'';
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(2px);
+  z-index:3000;
+}
+
+/* ───────────────── LAYOUT GRID ───────────────── */
+.layout{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:100vh;
+}
+@media(max-width:1023px){.layout{grid-template-columns:220px 1fr}}
+@media(max-width:767px){
+  .layout{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+}
+
+/* ──────────────── SIDEBAR ──────────────── */
+.sidebar{
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:1.4rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+  position:relative;
+  z-index:2000;
+}
+.hamburger{
+  display:none;
+  background:none;border:none;
+  color:var(--accent);cursor:pointer;
+}
+@media(max-width:767px){
+  .hamburger{display:block;margin-bottom:1rem}
+  .sidebar{
+    position:fixed;inset:0 45% 0 0;max-width:280px;
+    transform:translateX(-100%);
+    transition:.3s; padding-top:3.5rem;
+  }
+  .sidebar.open{transform:translateX(0)}
+}
+.profile-block{text-align:center}
+.avatar{
+  width:64px;height:64px;
+  background:#102235;border-radius:50%;
+  display:grid;place-items:center;
+  margin:0 auto 1rem;
+}
+.avatar i{stroke:var(--accent)}
+.email{font-size:.75rem;color:var(--sub)}
+.side-nav{display:flex;flex-direction:column;gap:.6rem}
+.side-nav button{
+  width:100%;display:flex;align-items:center;gap:.7rem;
+  background:none;border:none;padding:.6rem .4rem;
+  color:var(--txt);font-size:1rem;border-radius:8px;cursor:pointer;
+}
+.side-nav i{stroke:var(--accent)}
+.side-nav button:hover,
+.side-nav button.active{background:rgba(255,255,255,.07)}
+
+/* ──────────────── MAIN PANEL ──────────────── */
+.main{padding:2rem 2.5rem;overflow-y:auto}
+@media(max-width:767px){.main{padding:1.2rem 1rem}}
+.hero h1{font-size:2.3rem;margin-bottom:.35rem;font-weight:700}
+.hero p {color:var(--sub);margin-bottom:1.9rem}
+
+/* ──────────────── PAGE ROUTER ──────────────── */
+.page{display:none}
+.page.active{display:block}
+
+/* ──────────────── RATE CARDS ──────────────── */
+.rates-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:1.2rem;margin-bottom:2.4rem;
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem 1.2rem;
+}
+.card.wide{grid-column:span 2}
+.card h3{font-size:1rem;margin-bottom:.35rem;font-weight:600}
+.rate{font-size:.9rem}
+.red .rate{color:var(--down)}
+.green .rate{color:var(--up)}
+.card .sma,.card .rsi{
+  font-size:.74rem;color:var(--sub);margin-top:.15rem
+}
+
+/* ──────────────── MACRO + CHART WRAP ──────────────── */
+.macro-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.4rem
+}
+@media(max-width:1023px){.macro-wrap{grid-template-columns:1fr}}
+.macro-box{}
+.macro-table{
+  width:100%;font-size:.83rem;border-collapse:collapse
+}
+.macro-table th{color:var(--sub);text-align:left;padding-bottom:6px}
+.macro-table td{padding:.55rem 0;border-bottom:1px solid var(--border)}
+.macro-table .up{color:var(--up)}
+.macro-table .down{color:var(--down)}
+.macro-table tr:last-child td{border-bottom:none}
+
+/* Chart container */
+.chart-box{
+  width:100%;height:420px;
+  min-height:420px;      /* ⬅️ ensures proper space */
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#0d2235
+}
+
+
+/* ──────────────── PORTFOLIO SIMULATOR ──────────────── */
+.port-header{
+  display:flex;justify-content:space-between;align-items:center
+}
+.subline{color:var(--sub);font-size:.9rem;margin:.3rem 0 1.1rem}
+.port-form{
+  display:grid;gap:1rem;margin-bottom:1.4rem;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
+}
+.port-form label{display:flex;flex-direction:column;font-size:.84rem}
+.port-form input,.port-form select{
+  padding:.45rem;border:none;border-radius:6px;
+  background:#0d2235;color:#fff
+}
+.port-form button{
+  background:var(--accent);
+  color:#001323;font-weight:600;padding:.55rem;
+  border:none;border-radius:6px;cursor:pointer
+}
+
+.port-grid{
+  display:grid;gap:1.2rem;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
+}
+.port-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem;display:flex;flex-direction:column;gap:.45rem
+}
+.port-card h4{margin:0;font-size:1.07rem}
+.port-card .pl{font-weight:600}
+.port-card .ai{font-size:.78rem;color:var(--sub);margin-top:.25rem}
+
+/* ──────────────── TOGGLE SWITCH ──────────────── */
+.toggle{display:inline-flex;align-items:center;gap:.45rem}
+.toggle input{display:none}
+.toggle .slider{
+  position:relative;width:34px;height:18px;
+  background:#888;border-radius:20px;transition:.3s
+}
+.toggle .slider::before{
+  content:'';position:absolute;top:2px;left:2px;
+  width:14px;height:14px;background:#fff;border-radius:50%;transition:.3s
+}
+.toggle input:checked + .slider{background:var(--accent)}
+.toggle input:checked + .slider::before{transform:translateX(16px)}
+.label-text{font-size:.8rem;color:var(--sub)}
+
+/* ──────────────── BOTTOM BAR (MOBILE) ──────────────── */
+.bottom-bar{
+  display:none;
+  background:var(--panel);
+  border-top:1px solid var(--border);
+  padding:.6rem 0;
+  justify-content:space-around;align-items:center
+}
+.bottom-bar button{background:none;border:none;color:var(--accent);cursor:pointer}
+.bottom-bar button.active i{stroke:var(--bg)}
+.bottom-bar i{width:24px;height:24px}
+@media(max-width:767px){.bottom-bar{display:flex}}
+/* ——— Portfolio form tweaks ——— */
+/* ——— updated form layout ——— */
+.port-form{
+  display:grid;
+  gap:1rem;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+}
+.port-form input[type="number"],
+.port-form select{
+  text-align:right;
+}
+
+/* optional: give the Current-Price line in each card a hint-color */
+.port-card .current{color:var(--sub)}
+/* ——— Trade-Plan popup ——— */
+.modal{
+  position:fixed;inset:0;display:grid;place-items:center;
+  background:rgba(0,0,0,.55);z-index:5000;
+  transition:opacity .25s;
+}
+.modal.hidden{opacity:0;pointer-events:none}
+.modal-inner{
+  width:clamp(320px,90vw,520px);max-height:90vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:1.4rem;outline:none
+}
+.plan-list{list-style:none;margin:0 0 1rem;padding:0;font-size:.9rem}
+.plan-list li{margin:.28rem 0}
+.plan-note{font-size:.8rem;color:var(--sub);margin-bottom:1.1rem}
+.modal-actions{display:flex;gap:1rem;justify-content:flex-end}
+.btn-primary,.btn-secondary{
+  padding:.5rem 1.1rem;border-radius:6px;border:none;cursor:pointer;font-weight:600
+}
+.btn-primary{background:var(--accent);color:#001323}
+.btn-secondary{background:#1e293b;color:var(--txt)}
+body.noscroll{overflow:hidden}
+
+/* ——— card extra lines ——— */
+.port-card .prob{font-size:.78rem;color:var(--sub);margin-top:.32rem}
