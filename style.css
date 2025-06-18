@@ -273,3 +273,14 @@ body.noscroll{overflow:hidden}
 
 /* ——— card extra lines ——— */
 .port-card .prob{font-size:.78rem;color:var(--sub);margin-top:.32rem}
+.ai-toolbar{
+  display:flex;gap:1rem;align-items:center;margin-bottom:1rem;
+  flex-wrap:wrap;font-size:.85rem}
+.ai-toolbar input,.ai-toolbar select{padding:.3rem .4rem;border-radius:4px;
+  background:#0d2235;border:none;color:var(--txt);width:80px;text-align:right}
+.ai-badge{padding:.25rem .6rem;border-radius:20px;background:#0d2235;color:var(--sub)}
+.history-title{margin:2rem 0 .3rem;color:var(--sub)}
+.history-list{list-style:none;padding:0;font-size:.8rem;color:var(--sub)}
+.news-panel{margin-top:1.4rem}
+.news-panel ul{list-style:none;padding:0;font-size:.83rem}
+.news-panel li{margin:.25rem 0;color:var(--sub)}
