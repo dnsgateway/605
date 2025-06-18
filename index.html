@@ -67,6 +67,11 @@
     <!── 2. MACRO + CHART ──>
     <section id="macro" class="page macro-wrap">
       <div class="macro-box">
+        <!--  👇  add right after macro-box in #macro page -->
+<div id="newsPanel" class="news-panel">
+  <h3>Upcoming Events (24 h)</h3>
+  <ul id="newsUL"></ul>
+</div>
         <h2>Macro Events &amp; Metrics</h2>
         <table class="macro-table">
           <thead><tr><th>Pair</th><th>Vol.</th><th>Rate Δ</th><th>Event</th></tr></thead>
@@ -95,7 +100,22 @@
           <span class="slider"></span><span class="label-text">AI Assist</span>
         </label>
       </div>
+<!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
+<div class="ai-toolbar">
+  <label>Time-frame
+    <select id="tfSelect">
+      <option value="D">Daily</option>
+      <option value="4H">4-Hour</option>
+      <option value="1H">1-Hour</option>
+    </select>
+  </label>
 
+  <label>Account Risk %
+    <input id="acctRisk" type="number" step="0.1" value="1.0" />
+  </label>
+
+  <span id="aiStats" class="ai-badge" title="AI win-rate">—</span>
+</div>
       <p class="subline">Enter position details and let AI suggest a strategy.</p>
 
       <form id="portForm" class="port-form">
@@ -112,7 +132,11 @@
         <button type="submit">Add Position</button>
       </form>
 
-      <div id="portGrid" class="port-grid"></div>
+      <div id="portGrid" class="port-grid">
+        <!--  👇  below the portfolio grid -->
+<h3 class="history-title">Trade History</h3>
+<ul id="historyList" class="history-list"></ul>
+      </div>
     </section>
 
     <!── 4. SETTINGS ──>
@@ -232,7 +256,117 @@ function renderPositions() {
     portGrid.appendChild(card);
   });
 }
+/*****************  A.  CONTINUOUS LEARNING BADGE  *****************/
+const logKey='fx_trades_log';
+function saveTradeResult(p,livePL){
+  const log = JSON.parse(localStorage.getItem(logKey)||'[]');
+  log.push({ts:Date.now(), win: livePL>0});
+  localStorage.setItem(logKey,JSON.stringify(log.slice(-200))); // keep 200
+}
+function updateWinRate(){
+  const log = JSON.parse(localStorage.getItem(logKey)||'[]');
+  const rate = log.length? (100*log.filter(t=>t.win).length/log.length).toFixed(0)+'%' : '—';
+  aiStats.textContent = `AI Win-rate ${rate}`;
+}
+updateWinRate();
 
+/*****************  B.  MACRO EVENT FILTER  *****************/
+async function fetchCalendar(){
+  const rss='https://www.fxstreet.com/rss/news';
+  try{
+    const xml = await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(rss)).then(r=>r.text());
+    const items=[...new window.DOMParser().parseFromString(xml,'text/xml').querySelectorAll('item')]
+      .slice(0,8)  // first few
+      .map(it=>it.querySelector('title').textContent);
+    newsUL.innerHTML = items.map(t=>`<li>⚠️ ${t}</li>`).join('');
+  }catch{ newsUL.innerHTML='<li>No feed offline.</li>'; }
+}
+fetchCalendar();
+
+/*****************  C.  ADAPTIVE RISK ENGINE  *****************/
+function calcSize(entry,stop,pipVal,acctBal){
+  const riskPct=parseFloat(acctRisk.value)/100;
+  return Math.round( (acctBal*riskPct) / Math.abs(entry-stop) / pipVal );
+}
+
+/*****************  D.  PROBABILITY ENGINE  *****************/
+function hitProbability(closes,target,dir){
+  const sims=300, wins=closes.slice(-60); // last 60d
+  let hit=0;
+  for(let i=0;i<sims;i++){
+    const path=[...wins];
+    for(let d=0;d<10;d++){ // 10-day horizon
+      const step=(Math.random()-.5)*0.004; // crude ±0.2%
+      path.push(path.at(-1)*(1+step));
+      if(dir==='Buy' && path.at(-1)>=target){hit++;break;}
+      if(dir==='Sell'&& path.at(-1)<=target){hit++;break;}
+    }
+  }
+  return (100*hit/sims).toFixed(0)+'%';
+}
+
+/*****************  E.  BUILD-AI (multi-TF / ATR / prob)  *****************/
+function buildAI(pair,dir,entry,tf='D',riskBal=10000){
+  const bars=barsDB[pair]?.[tf]||[];           // bars by timeframe
+  if(bars.length<21)return {note:'No data'};
+  const closes=bars.map(b=>b.close),
+        atr = bars.slice(-14).reduce((a,b)=>a+(b.high-b.low),0)/14;
+
+  const stop = dir==='Buy'?entry-atr:entry+atr;
+  const tgt  = dir==='Buy'?entry+2*atr:entry-2*atr;
+  const size = calcSize(entry,stop,0.0001,riskBal);   // pipVal simplified
+
+  const {sma,rsi}=calcIndicators(closes);             // reuse previous helper
+  const prob = hitProbability(closes,tgt,dir);
+
+  return{
+    stop:stop.toFixed(4),target:tgt.toFixed(4),
+    sma:sma.toFixed(4),rsi:rsi.toFixed(1),
+    rr:(Math.abs((tgt-entry)/(entry-stop))).toFixed(2),
+    confidence:prob,size,
+    note:`ATR ${atr.toFixed(4)} (${tf})`
+  };
+}
+
+/*****************  F.  PORTFOLIO SUBMIT (hooks all engines)  *****************/
+portForm.onsubmit=e=>{
+  e.preventDefault();
+  const pair=pPair.value, entry=+pEntry.value, cur=+pCurrent.value, acctBal=10000;
+  const dir=cur>=entry?'Buy':'Sell';
+  let ai={};
+  if(aiPortToggle.checked){
+    const tf=tfSelect.value;
+    ai=buildAI(pair,dir,entry,tf,acctBal);
+  }
+  const pos={pair,entry,current:cur,dir,size:+pSize.value,...ai};
+  positions.push(pos);
+  renderPortfolio();
+};
+
+/*****************  G.  RENDER w/ AI extras + win-rate learn  *****************/
+function renderPortfolio(){
+  portGrid.innerHTML='';
+  positions.forEach(p=>{
+    const livePL=((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2);
+    saveTradeResult(p,livePL);   // learn
+    portGrid.insertAdjacentHTML('beforeend',`
+      <div class="port-card">
+        <h4>${p.pair}</h4>
+        <div>Entry <span>${p.entry.toFixed(4)}</span></div>
+        <div class="current">Current <span>${p.current.toFixed(4)}</span></div>
+        <div>Size <span>${p.size.toLocaleString()}</span></div>
+        ${p.stop? `<div>Stop <span>${p.stop}</span></div>`:''}
+        ${p.target? `<div>Target <span>${p.target}</span></div>`:''}
+        ${p.rsi? `<div>RSI <span>${p.rsi}</span></div>`:''}
+        ${p.sma? `<div>SMA-20 <span>${p.sma}</span></div>`:''}
+        ${p.rr? `<div>R/R <span>${p.rr}</span></div>`:''}
+        ${p.confidence? `<div class="prob">Hit Prob: ${p.confidence}</div>`:''}
+        <div class="pl"><b>P/L</b> <span style="color:${livePL>=0?'lime':'var(--down)'}">${livePL}</span></div>
+        ${p.note? `<div class="ai">${p.note}</div>`:''}
+      </div>`);}
+  );
+  updateWinRate();
+}
 // Dummy barsDB for demonstration (replace with actual OHLC fetch)
 const barsDB = {
   'EUR/USD': Array.from({ length: 60 }, (_, i) => {
