@@ -376,6 +376,51 @@ const barsDB = {
     return { open: base, high: base + 0.0015, low: base - 0.0015, close: base + 0.0005 };
   })
 };
+  /****************************************************************
+  ADD-ONS:  neon theme toggle  +  Yahoo-Finance metrics
+****************************************************************/
+
+/* ── Theme toggle ── */
+neonToggle.onchange = e => {
+  document.body.classList.toggle('neon', e.target.checked);
+  // ensure matrix + neon aren't active together
+  if(e.target.checked) matrixToggle.checked = false, document.body.classList.remove('matrix');
+};
+
+/* --------------  Yahoo-Finance data loader -------------- */
+const YF_SYMBOLS = {
+  'EURUSD=X':'EUR/USD',
+  'USDJPY=X':'USD/JPY',
+  'GBPUSD=X':'GBP/USD',
+  'AUDUSD=X':'AUD/USD'
+};
+
+async function loadYahooData(){
+  await Promise.all(Object.entries(YF_SYMBOLS).map(async ([yf,pair])=>{
+    try{
+      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d`;
+      const js = await fetch(url).then(r=>r.json());
+      const res = js.chart.result[0];
+      const close = res.indicators.quote[0].close.filter(n=>n);  // strip nulls
+      const price = close.at(-1);
+      const sma = close.slice(-20).reduce((a,b)=>a+b,0)/20;
+
+      let gain=0,loss=0;
+      for(let i=close.length-15;i<close.length-1;i++){
+        const diff = close[i+1]-close[i];
+        diff>0?gain+=diff:loss-=diff;
+      }
+      const rsi = 100-100/(1+gain/(loss||.0001));
+
+      metrics[pair] = {...(metrics[pair]||{}), price, sma, rsi };
+    }catch(err){console.warn('Yahoo fetch fail',yf,err);}
+  }));
+  updateUICards();    // re-paint the cards
+}
+
+/* call once on load, then every 10 min */
+loadYahooData();
+setInterval(loadYahooData, 600000);
 </script>
 </body>
 </html>
