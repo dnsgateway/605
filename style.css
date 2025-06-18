@@ -214,6 +214,51 @@ body.blurred::after{
   display:grid;gap:1.2rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
 }
+.stock-sim {
+  background: var(--panel);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+.stock-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.stock-form input {
+  padding: .45rem;
+  background: #0d2235;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+.stock-form button {
+  background: var(--accent);
+  border: none;
+  padding: .55rem;
+  border-radius: 6px;
+  color: var(--bg);
+  font-weight: bold;
+  cursor: pointer;
+}
+.stock-table {
+  display: grid;
+  gap: 1rem;
+}
+.stock-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 1rem;
+}
+.stock-card h4 {
+  margin: 0 0 .5rem;
+}
+.stock-card .pl {
+  font-weight: bold;
+}
 .port-card{
   background:var(--panel);
   border:1px solid var(--border);
