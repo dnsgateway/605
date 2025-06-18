@@ -131,6 +131,92 @@
   </nav>
 </div>
 
-<script src="script.js"></script>
+<script>
+/******************************************************
+  script.js – fixed for new form (pCurrent / pSize)
+******************************************************/
+
+/* 1. ICONS & NAV */
+feather.replace();
+const pages = document.querySelectorAll('.page');
+const navBtns = document.querySelectorAll('[data-page]');
+const sidebar = document.getElementById('sidebar');
+function show(id){
+  pages.forEach(p=>p.classList.toggle('active',p.id===id));
+  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  if(innerWidth<768) sidebar.classList.remove('open');
+}
+navBtns.forEach(b=>b.onclick=()=>show(b.dataset.page));
+show('rates');
+hamburger.onclick=()=>sidebar.classList.toggle('open');
+
+/* 2. THEMES */
+matrixToggle.onchange=e=>document.body.classList.toggle('matrix',e.target.checked);
+blurToggle  .onchange=e=>document.body.classList.toggle('blurred',e.target.checked);
+
+/* 3. DATA STORES */
+const latest={}, barsDB={}, metrics={};
+
+/* 4. PAIRS  */
+const PAIRS=[
+  {key:'EUR/USD',tv:'FX:EURUSD',quote:'EUR',inv:true},
+  {key:'USD/JPY',tv:'FX:USDJPY',quote:'JPY',inv:false},
+  {key:'GBP/USD',tv:'FX:GBPUSD',quote:'GBP',inv:true},
+  {key:'AUD/USD',tv:'FX:AUDUSD',quote:'AUD',inv:true}
+];
+
+/* 5. INITIALISE (same loaders/fallback you already pasted) */
+/*  … keep the loadPair, fallbackPair, calcIndicators, refreshSnapshot
+      functions from your last script – unchanged … */
+
+/*------------------------------------------------------------------
+   6.  PORTFOLIO  (new fields: pCurrent, pSize; auto-detect direction)
+------------------------------------------------------------------*/
+const positions=[];
+portForm.onsubmit=e=>{
+  e.preventDefault();
+  const pair   = pPair.value;
+  const entry  = +pEntry.value;
+  const cur    = +pCurrent.value;     // user’s current price snapshot
+  const size   = +pSize.value;
+  const dir    = cur >= entry ? 'Buy' : 'Sell';   // auto direction
+  const aiPart = aiPortToggle.checked ? buildAI(pair,dir,entry) : {};
+
+  positions.push({pair,entry,cur,size,dir,...aiPart});
+  renderPortfolio();
+  portForm.reset();
+};
+
+function liveMark(pair){
+  if(pair==='EUR/USD') return 1/latest.EUR;
+  if(pair==='USD/JPY') return latest.JPY;
+  if(pair==='GBP/USD') return 1/latest.GBP;
+  if(pair==='AUD/USD') return 1/latest.AUD;
+}
+
+function renderPortfolio(){
+  portGrid.innerHTML='';
+  positions.forEach(p=>{
+    const mark = liveMark(p.pair) || p.cur;  // fallback to user current
+    const pl   = ((p.dir==='Buy'?mark-p.entry:p.entry-mark)*p.size).toFixed(2);
+    portGrid.insertAdjacentHTML('beforeend',`
+      <div class="port-card">
+        <h4>${p.pair}</h4>
+        <div>Entry&nbsp;<span>${p.entry.toFixed(4)}</span></div>
+        <div class="current">Current&nbsp;<span>${mark.toFixed(4)}</span></div>
+        ${p.stop?  `<div>Stop&nbsp;<span>${p.stop.toFixed(4)}</span></div>`:''}
+        ${p.tgt?   `<div>Target&nbsp;<span>${p.tgt.toFixed(4)}</span></div>`:''}
+        <div>Size&nbsp;<span>${p.size.toLocaleString()}</span></div>
+        <div class="pl">P/L&nbsp;<span style="color:${pl>=0?'lime':'var(--down)'}">${pl}</span></div>
+        ${p.note?`<div class="ai"><strong>AI&nbsp;</strong>${p.note}</div>`:''}
+      </div>`);
+  });
+}
+
+/* keep your buildAI(), detectPattern() etc. as-is.  
+   After snapshot refresh, call renderPortfolio() again */
+setInterval(refreshSnapshot,60_000);
+
+</script>
 </body>
 </html>
