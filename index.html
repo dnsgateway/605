@@ -169,50 +169,76 @@ const PAIRS=[
 /*  … keep the loadPair, fallbackPair, calcIndicators, refreshSnapshot
       functions from your last script – unchanged … */
 
-/*------------------------------------------------------------------
-   6.  PORTFOLIO  (new fields: pCurrent, pSize; auto-detect direction)
-------------------------------------------------------------------*/
-const positions=[];
-portForm.onsubmit=e=>{
-  e.preventDefault();
-  const pair   = pPair.value;
-  const entry  = +pEntry.value;
-  const cur    = +pCurrent.value;     // user’s current price snapshot
-  const size   = +pSize.value;
-  const dir    = cur >= entry ? 'Buy' : 'Sell';   // auto direction
-  const aiPart = aiPortToggle.checked ? buildAI(pair,dir,entry) : {};
+//* ─────────── PORTFOLIO LOGIC — FIXED ─────────── */
+const pos = [];
 
-  positions.push({pair,entry,cur,size,dir,...aiPart});
+portForm.onsubmit = async e => {
+  e.preventDefault();
+
+  const pair    = pPair.value;
+  const entry   = parseFloat(pEntry.value);
+  const current = parseFloat(pCurrent.value);
+  const size    = parseInt(pSize.value.replace(/,/g, '')) || 0;
+
+  if (!pair || !entry || !current || !size) {
+    alert("Please complete all fields.");
+    return;
+  }
+
+  const direction = entry < current ? 'Buy' : 'Sell';
+  const m = metrics[pair] || {};
+  const aiEnabled = aiPortToggle.checked;
+
+  let ai = {};
+  if (aiEnabled && barsDB[pair]) {
+    const atr = m.atr || 0.001;
+    const stop = direction === 'Buy' ? entry - atr : entry + atr;
+    const target = direction === 'Buy' ? entry + 2 * atr : entry - 2 * atr;
+    const rr = Math.abs((target - entry) / (entry - stop));
+    const confidence = (100 - Math.abs(m.rsi - 50)) * (rr > 1.5 ? 1 : 0.8); // simple model
+    const pattern = detectPattern(barsDB[pair]);
+
+    ai = {
+      stop,
+      target,
+      rsi: m.rsi?.toFixed(1) || '--',
+      sma: m.sma?.toFixed(4) || '--',
+      rr: rr.toFixed(2),
+      confidence: confidence.toFixed(1) + '%',
+      note: pattern ? `Pattern: ${pattern}` : ''
+    };
+  }
+
+  pos.push({ pair, entry, current, size, direction, ...ai });
   renderPortfolio();
   portForm.reset();
 };
 
-function liveMark(pair){
-  if(pair==='EUR/USD') return 1/latest.EUR;
-  if(pair==='USD/JPY') return latest.JPY;
-  if(pair==='GBP/USD') return 1/latest.GBP;
-  if(pair==='AUD/USD') return 1/latest.AUD;
-}
+function renderPortfolio() {
+  portGrid.innerHTML = '';
+  pos.forEach(p => {
+    const mp = p.current;
+    const pnl = ((p.direction === 'Buy' ? mp - p.entry : p.entry - mp) * p.size).toFixed(2);
 
-function renderPortfolio(){
-  portGrid.innerHTML='';
-  positions.forEach(p=>{
-    const mark = liveMark(p.pair) || p.cur;  // fallback to user current
-    const pl   = ((p.dir==='Buy'?mark-p.entry:p.entry-mark)*p.size).toFixed(2);
-    portGrid.insertAdjacentHTML('beforeend',`
+    portGrid.insertAdjacentHTML('beforeend', `
       <div class="port-card">
         <h4>${p.pair}</h4>
-        <div>Entry&nbsp;<span>${p.entry.toFixed(4)}</span></div>
-        <div class="current">Current&nbsp;<span>${mark.toFixed(4)}</span></div>
-        ${p.stop?  `<div>Stop&nbsp;<span>${p.stop.toFixed(4)}</span></div>`:''}
-        ${p.tgt?   `<div>Target&nbsp;<span>${p.tgt.toFixed(4)}</span></div>`:''}
-        <div>Size&nbsp;<span>${p.size.toLocaleString()}</span></div>
-        <div class="pl">P/L&nbsp;<span style="color:${pl>=0?'lime':'var(--down)'}">${pl}</span></div>
-        ${p.note?`<div class="ai"><strong>AI&nbsp;</strong>${p.note}</div>`:''}
-      </div>`);
+        <div>Entry: <span>${p.entry.toFixed(4)}</span></div>
+        <div>Current: <span>${p.current.toFixed(4)}</span></div>
+        <div>Position: <span>${p.direction}</span></div>
+        <div>Size: <span>${p.size.toLocaleString()}</span></div>
+        ${p.stop ? `<div>Stop: <span>${p.stop.toFixed(4)}</span></div>` : ''}
+        ${p.target ? `<div>Target: <span>${p.target.toFixed(4)}</span></div>` : ''}
+        ${p.rsi ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
+        ${p.sma ? `<div>SMA: <span>${p.sma}</span></div>` : ''}
+        ${p.rr ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
+        ${p.confidence ? `<div class="prob">Confidence: ${p.confidence}</div>` : ''}
+        <div class="pl"><b>P/L</b> <span style="color:${pnl >= 0 ? 'lime' : 'salmon'}">${pnl}</span></div>
+        ${p.note ? `<div class="ai">${p.note}</div>` : ''}
+      </div>
+    `);
   });
 }
-
 /* keep your buildAI(), detectPattern() etc. as-is.  
    After snapshot refresh, call renderPortfolio() again */
 setInterval(refreshSnapshot,60_000);
