@@ -135,116 +135,111 @@
 /******************************************************
   script.js – fixed for new form (pCurrent / pSize)
 ******************************************************/
-
-/* 1. ICONS & NAV */
 feather.replace();
-const pages = document.querySelectorAll('.page');
-const navBtns = document.querySelectorAll('[data-page]');
-const sidebar = document.getElementById('sidebar');
-function show(id){
-  pages.forEach(p=>p.classList.toggle('active',p.id===id));
-  navBtns.forEach(b=>b.classList.toggle('active',b.dataset.page===id));
-  if(innerWidth<768) sidebar.classList.remove('open');
+
+// Page navigation
+document.querySelectorAll('[data-page]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.page').forEach(p =>
+      p.classList.toggle('active', p.id === btn.dataset.page)
+    );
+  };
+});
+
+// Theme toggles
+matrixToggle.onchange = e => document.body.classList.toggle('matrix', e.target.checked);
+blurToggle.onchange = e => document.body.classList.toggle('blurred', e.target.checked);
+
+// AI logic helpers
+function detectPattern(data) {
+  if (!data || data.length < 2) return null;
+  const [prev, last] = data.slice(-2);
+  if (prev.close < prev.open && last.close > last.open && last.close > prev.open && last.open < prev.close) return 'Bullish Engulfing';
+  if (prev.close > prev.open && last.close < last.open && last.open > prev.close && last.close < prev.open) return 'Bearish Engulfing';
+  if (last.high < prev.high && last.low > prev.low) return 'Inside Bar';
+  return null;
 }
-navBtns.forEach(b=>b.onclick=()=>show(b.dataset.page));
-show('rates');
-hamburger.onclick=()=>sidebar.classList.toggle('open');
 
-/* 2. THEMES */
-matrixToggle.onchange=e=>document.body.classList.toggle('matrix',e.target.checked);
-blurToggle  .onchange=e=>document.body.classList.toggle('blurred',e.target.checked);
+function calculateIndicators(closes) {
+  const sma = closes.slice(-20).reduce((a, c) => a + c, 0) / 20;
+  let gain = 0, loss = 0;
+  for (let i = closes.length - 15; i < closes.length - 1; i++) {
+    const diff = closes[i + 1] - closes[i];
+    if (diff > 0) gain += diff;
+    else loss -= diff;
+  }
+  const rsi = 100 - 100 / (1 + gain / (loss || 0.0001));
+  return { sma, rsi };
+}
 
-/* 3. DATA STORES */
-const latest={}, barsDB={}, metrics={};
+// Portfolio logic
+const positions = [];
 
-/* 4. PAIRS  */
-const PAIRS=[
-  {key:'EUR/USD',tv:'FX:EURUSD',quote:'EUR',inv:true},
-  {key:'USD/JPY',tv:'FX:USDJPY',quote:'JPY',inv:false},
-  {key:'GBP/USD',tv:'FX:GBPUSD',quote:'GBP',inv:true},
-  {key:'AUD/USD',tv:'FX:AUDUSD',quote:'AUD',inv:true}
-];
-
-/* 5. INITIALISE (same loaders/fallback you already pasted) */
-/*  … keep the loadPair, fallbackPair, calcIndicators, refreshSnapshot
-      functions from your last script – unchanged … */
-
-//* ─────────── PORTFOLIO LOGIC — FIXED ─────────── */
-const pos = [];
-
-portForm.onsubmit = async e => {
+portForm.onsubmit = e => {
   e.preventDefault();
 
-  const pair    = pPair.value;
-  const entry   = parseFloat(pEntry.value);
+  const pair = pPair.value;
+  const entry = parseFloat(pEntry.value);
   const current = parseFloat(pCurrent.value);
-  const size    = parseInt(pSize.value.replace(/,/g, '')) || 0;
+  const size = parseFloat(pSize.value.replace(/,/g, '')) || 0;
+  const dir = current >= entry ? 'Buy' : 'Sell';
+  const priceDiff = dir === 'Buy' ? (current - entry) : (entry - current);
+  const pl = (priceDiff * size).toFixed(2);
 
-  if (!pair || !entry || !current || !size) {
-    alert("Please complete all fields.");
-    return;
-  }
-
-  const direction = entry < current ? 'Buy' : 'Sell';
-  const m = metrics[pair] || {};
   const aiEnabled = aiPortToggle.checked;
+  let stop = '--', tgt = '--', rsi = '--', sma = '--', rr = '--', conf = '--', note = '';
 
-  let ai = {};
   if (aiEnabled && barsDB[pair]) {
-    const atr = m.atr || 0.001;
-    const stop = direction === 'Buy' ? entry - atr : entry + atr;
-    const target = direction === 'Buy' ? entry + 2 * atr : entry - 2 * atr;
-    const rr = Math.abs((target - entry) / (entry - stop));
-    const confidence = (100 - Math.abs(m.rsi - 50)) * (rr > 1.5 ? 1 : 0.8); // simple model
-    const pattern = detectPattern(barsDB[pair]);
+    const bars = barsDB[pair];
+    const closes = bars.map(b => b.close);
+    const { sma: smaVal, rsi: rsiVal } = calculateIndicators(closes);
+    const atr = bars.slice(-14).reduce((a, b) => a + (b.high - b.low), 0) / 14;
 
-    ai = {
-      stop,
-      target,
-      rsi: m.rsi?.toFixed(1) || '--',
-      sma: m.sma?.toFixed(4) || '--',
-      rr: rr.toFixed(2),
-      confidence: confidence.toFixed(1) + '%',
-      note: pattern ? `Pattern: ${pattern}` : ''
-    };
+    stop = dir === 'Buy' ? (entry - atr).toFixed(4) : (entry + atr).toFixed(4);
+    tgt = dir === 'Buy' ? (entry + 2 * atr).toFixed(4) : (entry - 2 * atr).toFixed(4);
+    rsi = rsiVal.toFixed(1);
+    sma = smaVal.toFixed(4);
+    rr = (Math.abs((tgt - entry) / (entry - stop))).toFixed(2);
+    conf = rsiVal > 70 || rsiVal < 30 ? 'High' : 'Medium';
+    const pattern = detectPattern(bars);
+    if (pattern) note = `Detected: ${pattern}`;
   }
 
-  pos.push({ pair, entry, current, size, direction, ...ai });
-  renderPortfolio();
-  portForm.reset();
+  positions.push({ pair, entry, current, size, dir, pl, stop, tgt, rsi, sma, rr, conf, note });
+  renderPositions();
 };
 
-function renderPortfolio() {
+function renderPositions() {
   portGrid.innerHTML = '';
-  pos.forEach(p => {
-    const mp = p.current;
-    const pnl = ((p.direction === 'Buy' ? mp - p.entry : p.entry - mp) * p.size).toFixed(2);
-
-    portGrid.insertAdjacentHTML('beforeend', `
-      <div class="port-card">
-        <h4>${p.pair}</h4>
-        <div>Entry: <span>${p.entry.toFixed(4)}</span></div>
-        <div class="current">Current: <span>${p.current.toFixed(4)}</span></div>
-        <div>Position: <span>${p.direction}</span></div>
-        <div>Size: <span>${p.size.toLocaleString()}</span></div>
-
-        ${p.stop      ? `<div>Stop Loss: <span>${p.stop.toFixed(4)}</span></div>` : ''}
-        ${p.target    ? `<div>Target: <span>${p.target.toFixed(4)}</span></div>` : ''}
-        ${p.rsi       ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
-        ${p.sma       ? `<div>SMA-20: <span>${p.sma}</span></div>` : ''}
-        ${p.rr        ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
-        ${p.confidence ? `<div class="prob">Confidence: ${p.confidence}</div>` : ''}
-
-        <div class="pl"><b>P/L</b> <span style="color:${pnl >= 0 ? 'lime' : 'salmon'}">${pnl}</span></div>
-        ${p.note ? `<div class="ai">${p.note}</div>` : ''}
-      </div>
-    `);
+  positions.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'port-card';
+    card.innerHTML = `
+      <h4>${p.pair}</h4>
+      <div>Entry: <span>${p.entry.toFixed(4)}</span></div>
+      <div class="current">Current: <span>${p.current.toFixed(4)}</span></div>
+      <div>Position: <span>${p.dir}</span></div>
+      <div>Size: <span>${p.size.toLocaleString()}</span></div>
+      <div class="pl">P/L <span style="color:${p.pl >= 0 ? 'lime' : 'salmon'}">${p.pl}</span></div>
+      ${p.stop !== '--' ? `<div>Stop Loss: <span>${p.stop}</span></div>` : ''}
+      ${p.tgt !== '--' ? `<div>Target: <span>${p.tgt}</span></div>` : ''}
+      ${p.rsi !== '--' ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
+      ${p.sma !== '--' ? `<div>SMA-20: <span>${p.sma}</span></div>` : ''}
+      ${p.rr !== '--' ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
+      ${p.conf !== '--' ? `<div>Confidence: <span>${p.conf}</span></div>` : ''}
+      ${p.note ? `<div class="ai">${p.note}</div>` : ''}
+    `;
+    portGrid.appendChild(card);
   });
 }
-/* keep your buildAI(), detectPattern() etc. as-is.  
-   After snapshot refresh, call renderPortfolio() again */
-setInterval(refreshSnapshot,60_000);
 
+// Dummy barsDB for demonstration (replace with actual OHLC fetch)
+const barsDB = {
+  'EUR/USD': Array.from({ length: 60 }, (_, i) => {
+    const base = 1.10 + 0.002 * i;
+    return { open: base, high: base + 0.0015, low: base - 0.0015, close: base + 0.0005 };
+  })
+};
 </script>
 </body>
 </html>
