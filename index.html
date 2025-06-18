@@ -224,15 +224,17 @@ function renderPortfolio() {
       <div class="port-card">
         <h4>${p.pair}</h4>
         <div>Entry: <span>${p.entry.toFixed(4)}</span></div>
-        <div>Current: <span>${p.current.toFixed(4)}</span></div>
+        <div class="current">Current: <span>${p.current.toFixed(4)}</span></div>
         <div>Position: <span>${p.direction}</span></div>
         <div>Size: <span>${p.size.toLocaleString()}</span></div>
-        ${p.stop ? `<div>Stop: <span>${p.stop.toFixed(4)}</span></div>` : ''}
-        ${p.target ? `<div>Target: <span>${p.target.toFixed(4)}</span></div>` : ''}
-        ${p.rsi ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
-        ${p.sma ? `<div>SMA: <span>${p.sma}</span></div>` : ''}
-        ${p.rr ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
+
+        ${p.stop      ? `<div>Stop Loss: <span>${p.stop.toFixed(4)}</span></div>` : ''}
+        ${p.target    ? `<div>Target: <span>${p.target.toFixed(4)}</span></div>` : ''}
+        ${p.rsi       ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
+        ${p.sma       ? `<div>SMA-20: <span>${p.sma}</span></div>` : ''}
+        ${p.rr        ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
         ${p.confidence ? `<div class="prob">Confidence: ${p.confidence}</div>` : ''}
+
         <div class="pl"><b>P/L</b> <span style="color:${pnl >= 0 ? 'lime' : 'salmon'}">${pnl}</span></div>
         ${p.note ? `<div class="ai">${p.note}</div>` : ''}
       </div>
