@@ -90,7 +90,23 @@
   <h3>Upcoming Events (24 h)</h3>
   <ul id="newsUL"></ul>
 </div>
-
+<!-- 📈 STOCK PORTFOLIO SIMULATOR -->
+<section class="stock-sim">
+  <h2>Stock Portfolio Simulator</h2>
+  <form id="stockForm" class="stock-form">
+    <label>
+      Ticker <input type="text" id="stockSymbol" placeholder="e.g. AAPL" required />
+    </label>
+    <label>
+      Quantity <input type="number" id="stockQty" required />
+    </label>
+    <label>
+      Entry Price <input type="number" id="stockEntry" step="0.01" required />
+    </label>
+    <button type="submit">Add Stock</button>
+  </form>
+  <div id="stockTable" class="stock-table"></div>
+</section>
     </section>
 
     <!── 3. PORTFOLIO SIM ──>
@@ -262,6 +278,38 @@ function renderPositions() {
       ${p.note ? `<div class="ai">${p.note}</div>` : ''}
     `;
     portGrid.appendChild(card);
+  });
+}
+const stockPortfolio = [];
+
+document.getElementById('stockForm').onsubmit = function (e) {
+  e.preventDefault();
+  const symbol = stockSymbol.value.toUpperCase();
+  const qty = +stockQty.value;
+  const entry = +stockEntry.value;
+
+  // Simulate current price (replace with API call if desired)
+  const currentPrice = entry + (Math.random() - 0.5) * 5; // Simulate ±$2.5 swing
+  const pl = ((currentPrice - entry) * qty).toFixed(2);
+
+  stockPortfolio.push({ symbol, qty, entry, currentPrice, pl });
+  renderStockTable();
+};
+
+function renderStockTable() {
+  const table = document.getElementById('stockTable');
+  table.innerHTML = '';
+  stockPortfolio.forEach(stock => {
+    const color = stock.pl >= 0 ? 'lime' : 'salmon';
+    table.innerHTML += `
+      <div class="stock-card">
+        <h4>${stock.symbol}</h4>
+        <div>Entry Price: ${stock.entry.toFixed(2)}</div>
+        <div>Current Price: ${stock.currentPrice.toFixed(2)}</div>
+        <div>Quantity: ${stock.qty}</div>
+        <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
+      </div>
+    `;
   });
 }
 /*****************  A.  CONTINUOUS LEARNING BADGE  *****************/
