@@ -263,8 +263,8 @@ function renderPositions() {
     card.className = 'port-card';
     card.innerHTML = `
       <h4>${p.pair}</h4>
-      <div>Entry: <span>${p.entry.toFixed(4)}</span></div>
-      <div class="current">Current: <span>${p.current.toFixed(4)}</span></div>
+      <div>Entry: <span>${p.entry.toFixed(5)}</span></div>
+      <div class="current">Current: <span>${p.current.toFixed(5)}</span></div>
       <div>Position: <span>${p.dir}</span></div>
       <div>Size: <span>${p.size.toLocaleString()}</span></div>
       <div class="pl">P/L <span style="color:${p.pl >= 0 ? 'lime' : 'salmon'}">${p.pl}</span></div>
