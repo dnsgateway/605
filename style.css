@@ -15,6 +15,23 @@
   --up:#20e0a0;           /* green up color */
   --down:#ff4f7e;         /* red down color */
 }
+
+/* solid outline requested */
+.boxed{border:1px solid var(--border);border-radius:12px;padding:1rem}
+
+/* NEON palette (80’s green-blue glow) */
+body.neon{
+  --bg:#001010;
+  --panel:#002326;
+  --border:#05ffb8;
+  --accent:#05ffb8;
+  --txt:#b7fffb;
+  --sub:#57ffc4;
+  --up:#29ff9a;
+  --down:#ff6b9b;
+}
+body.neon .boxed{box-shadow:0 0 5px var(--accent);}
+
 /* “Matrix” override */
 body.matrix{
   --bg:#000;
