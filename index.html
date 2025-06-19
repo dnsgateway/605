@@ -458,6 +458,21 @@ function injectCsvBtn() {
   if (historySection) historySection.after(btn);
 }
 injectCsvBtn();
+  function loadMiniCharts() {
+  document.querySelectorAll('.mini-chart').forEach(div => {
+    const symbol = div.dataset.symbol || 'FX:EURUSD';
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=15&theme=dark&style=2&hide_top_toolbar=1&hide_legend=1&save_image=0&studies=[]`;
+    iframe.width = '100%';
+    iframe.height = '100';
+    iframe.frameBorder = '0';
+    iframe.scrolling = 'no';
+    iframe.style.borderRadius = '8px';
+    div.innerHTML = ''; // clear before inserting
+    div.appendChild(iframe);
+  });
+}
+window.addEventListener('DOMContentLoaded', loadMiniCharts);
 </script>
 </body>
 </html>
