@@ -399,21 +399,29 @@ function genCSV(){
   });
   return 'data:text/csv;charset=utf-8,'+ rows.map(r=>r.join(',')).join('\n');
 }
-function injectCsvBtn(){
-  if(document.getElementById('dlCsvBtn')) return;
-  const btn=document.createElement('button');
-  btn.id='dlCsvBtn'; btn.textContent='Download Trades CSV';
-  btn.className='btn-primary';            // inherit styling
-  btn.onclick=()=>{
-    const uri=genCSV();
-    const a=document.createElement('a');
-    a.href=encodeURI(uri);
-    a.download='trades.csv';
+function injectCsvBtn() {
+  if (document.getElementById('dlCsvBtn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'dlCsvBtn';
+  btn.textContent = 'Download Trades CSV';
+  btn.className = 'btn-primary';
+  btn.style.marginTop = '1rem';
+
+  btn.onclick = () => {
+    const uri = genCSV();
+    const a = document.createElement('a');
+    a.href = encodeURI(uri);
+    a.download = 'trades.csv';
     a.click();
   };
   document.querySelector('.stock-sim').appendChild(btn);
 }
 injectCsvBtn();
+    // 👇 Append under trade history section
+  const historySection = document.getElementById('tradeHistory') || document.querySelector('.port-grid');
+  if (historySection) historySection.after(btn);
+  }
 </script>
 </body>
 </html>
