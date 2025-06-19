@@ -274,7 +274,17 @@ body.blurred::after{
 .port-card h4{margin:0;font-size:1.07rem}
 .port-card .pl{font-weight:600}
 .port-card .ai{font-size:.78rem;color:var(--sub);margin-top:.25rem}
+.port-card, .stock-card {
+  position: relative;
+}
 
+.tv-summary-widget {
+  margin-top: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
 /* ──────────────── TOGGLE SWITCH ──────────────── */
 .toggle{display:inline-flex;align-items:center;gap:.45rem}
 .toggle input{display:none}
