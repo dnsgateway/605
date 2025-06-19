@@ -153,6 +153,7 @@
         <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
         <button type="submit">Add Position</button>
       </form>
+ 
 
       <div id="portGrid" class="port-grid">
         <!--  👇  below the portfolio grid -->
@@ -416,6 +417,9 @@ function injectCsvBtn() {
     a.click();
   };
   document.querySelector('.stock-sim').appendChild(btn);
+  // 👇 Append under trade history section
+  const historySection = document.getElementById('portGrid') || document.querySelector('.port-grid');
+  if (historySection) historySection.after(btn);
 }
 injectCsvBtn();
 </script>
