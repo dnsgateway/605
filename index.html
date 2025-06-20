@@ -204,199 +204,188 @@
   </nav>
 </div>
 
-<<script>
-/* =========================================================================
-   0. GLOBALS
-========================================================================= */
-const FX_PAIRS = { 'EUR/USD':'EURUSD=X','USD/JPY':'USDJPY=X','GBP/USD':'GBPUSD=X','AUD/USD':'AUDUSD=X','USD/CAD':'USDCAD=X' };
-const quoteAPI = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=';
-
-const fxPositions   = [];     // active forex paper-trades
-const stockPortfolio= [];     // active stock paper-trades
-const watchlist     = new Set();
-let   stockQuotes   = {};     // latest quote cache         
-
-/* =========================================================================
-   1.  SIDEBAR / THEMES  (unchanged)
-========================================================================= */
+<script>
+/******************************************************
+  script.js – fixed for new form (pCurrent / pSize)
+******************************************************/
+/*────────────────────────   GLOBALS   ────────────────────────*/
 feather.replace();
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{document
-  .querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===b.dataset.page));});
-hamburger.onclick=()=>sidebar.classList.toggle('open');
-matrixToggle.onchange=e=>document.body.classList.toggle('matrix',e.target.checked);
-blurToggle  .onchange=e=>document.body.classList.toggle('blurred',e.target.checked);
-neonToggle  .onchange=e=>{document.body.classList.toggle('neon',e.target.checked);
-  if(e.target.checked){matrixToggle.checked=false;document.body.classList.remove('matrix');}};
 
-/* =========================================================================
-   2.  YAHOO  FX  SNAPSHOT  +  CARDS
-========================================================================= */
-async function getFxMetrics(){
+const RATE_REFRESH_MS   = 60_000;     // Forex snapshot (Yahoo) 
+const STOCK_REFRESH_MS  = 60_000;     // Stock quotes refresh
+const YF_LOOKBACK_DAYS  = 90;         // for SMA / RSI calc
+const quoteAPI          = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=';
+
+/*────────────────────────   PAGE ROUTER   ────────────────────*/
+document.querySelectorAll('[data-page]').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.page')
+      .forEach(p=>p.classList.toggle('active',p.id===btn.dataset.page));
+  };
+});
+hamburger.onclick=()=>sidebar.classList.toggle('open');
+
+/*────────────────────────   THEMES   ─────────────────────────*/
+matrixToggle .onchange=e=>document.body.classList.toggle('matrix', e.target.checked);
+blurToggle   .onchange=e=>document.body.classList.toggle('blurred',e.target.checked);
+neonToggle   .onchange=e=>{
+  document.body.classList.toggle('neon', e.target.checked);
+  if(e.target.checked){ matrixToggle.checked=false; document.body.classList.remove('matrix');}
+};
+
+/*────────────────────────   METRIC STORE   ───────────────────*/
+const fxMetrics   = {};  // { 'EUR/USD': {price,sma,rsi} }
+const stockQuotes = {};  // { 'AAPL': {price,prevClose,change} }
+
+/*────────────────────────   FOREX – Yahoo chart API  ─────────*/
+const FX_PAIRS = {
+  'EUR/USD':'EURUSD=X',
+  'USD/JPY':'USDJPY=X',
+  'GBP/USD':'GBPUSD=X',
+  'AUD/USD':'AUDUSD=X'
+};
+async function loadFxMetrics(){
   for(const [pair,yf] of Object.entries(FX_PAIRS)){
-    const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d`;
-    const js = await fetch(url).then(r=>r.json()).catch(()=>null); 
-    if(!js) continue;
-    const closes=js.chart.result[0].indicators.quote[0].close.filter(Boolean);
-    const price=closes.at(-1);
-    const sma  =closes.slice(-20).reduce((a,b)=>a+b,0)/20;
-    let g=0,l=0;for(let i=closes.length-15;i<closes.length-1;i++){const d=closes[i+1]-closes[i];d>0?g+=d:l-=d;}
-    const rsi=100-100/(1+g/(l||.0001));
-    fxMetrics[pair]={price,sma,rsi,closes};
+    try{
+      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=${YF_LOOKBACK_DAYS}d&interval=1d`;
+      const js = await fetch(url).then(r=>r.json());
+      const {close} = js.chart.result[0].indicators.quote[0];
+      const prc = close.filter(Boolean).at(-1);
+      const sma = close.slice(-20).reduce((a,b)=>a+b,0)/20;
+      let g=0,l=0;
+      for(let i=close.length-15;i<close.length-1;i++){
+        const d = close[i+1]-close[i];
+        d>0?g+=d:l-=d;
+      }
+      const rsi = 100-100/(1+g/(l||.0001));
+      fxMetrics[pair]={price:prc,sma,rsi};
+    }catch(err){console.warn('FX fetch fail',pair,err);}
   }
-  document.querySelectorAll('.rates-grid .card').forEach(c=>{
-    const key=c.dataset.pair.replace(/([A-Z]+)([A-Z]+)/,'$1/$2');
-    const m=fxMetrics[key]; if(!m) return;
-    c.querySelector('.price').textContent=m.price.toFixed(5);
-    c.querySelector('.sma span').textContent=m.sma.toFixed(4);
-    c.querySelector('.rsi span').textContent=m.rsi.toFixed(1);
+  paintFxCards();
+}
+function paintFxCards(){
+  document.querySelectorAll('.rates-grid .card').forEach(card=>{
+    const sym = card.dataset.pair.replace(/([A-Z]+)([A-Z]+)/,'$1/$2');
+    const m   = fxMetrics[sym];
+    if(!m) return;
+    card.querySelector('.price').textContent = m.price.toFixed(5);
+    card.querySelector('.sma span').textContent = m.sma.toFixed(4);
+    card.querySelector('.rsi span').textContent = m.rsi.toFixed(1);
   });
 }
-getFxMetrics(); setInterval(getFxMetrics,60_000);
+/* first load + interval */
+loadFxMetrics(); setInterval(loadFxMetrics,RATE_REFRESH_MS);
 
-/* =========================================================================
-   3.  WATCH-LIST  (symbol search + refresh)
-========================================================================= */
-const autoURL = s=>`https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(s)}&quotesCount=5`;
-stockSymbol.addEventListener('input',async e=>{
-  const val=e.target.value.trim(); if(val.length<2) return;
-  const js=await fetch(autoURL(val)).then(r=>r.json()).catch(()=>null);
-  if(!js) return;
-  e.target.list?.remove();                  // clear old datalist
-  const dl=document.createElement('datalist'); dl.id='autoSym';
-  js.quotes.forEach(q=>{const opt=document.createElement('option');opt.value=q.symbol; dl.appendChild(opt);});
-  document.body.appendChild(dl); e.target.setAttribute('list','autoSym');
+/*────────────────────────   STOCK QUOTES   ───────────────────*/
+const watchlist = new Set();
+function fetchStockQuotes(){
+  if(!watchlist.size) return;
+  const url = quoteAPI + [...watchlist].join(',');
+  fetch(url).then(r=>r.json()).then(js=>{
+    js.quoteResponse.result.forEach(q=>{
+      stockQuotes[q.symbol]={price:q.regularMarketPrice,prev:q.regularMarketPreviousClose};
+    });
+    paintStockTable();
+    if(activeChartSymbol) updateTV(activeChartSymbol);  // refresh if displayed
+  }).catch(e=>console.warn('Stock quote fetch err',e));
+}
+setInterval(fetchStockQuotes,STOCK_REFRESH_MS);
+
+/*────────────────────────   TRADINGVIEW HOOK   ───────────────*/
+const tvFrame = document.getElementById('tvChart');
+const tvBase  = 'https://s.tradingview.com/widgetembed/?interval=30&theme=dark&style=1&symbol=';
+let   activeChartSymbol = 'FX:EURUSD';
+function updateTV(sym){
+  // TV FOREX symbols use FX: prefix, stocks plain (eg. NASDAQ:AAPL) – simple heuristic:
+  activeChartSymbol = sym.includes('/') ? `FX:${sym.replace('/','')}` : sym;
+  tvFrame.src = `${tvBase}${encodeURIComponent(activeChartSymbol)}`;
+}
+
+/* click any FX card => update chart */
+document.querySelectorAll('.rates-grid .card').forEach(c=>{
+  c.onclick=()=>updateTV(c.dataset.pair.includes('/')?c.dataset.pair.replace(/([A-Z]+)([A-Z]+)/,'$1/$2'):c.dataset.pair);
 });
 
-/* realtime quotes every minute */
-async function refreshStocks(){
-  if(!watchlist.size) return;
-  const url=quoteAPI+[...watchlist].join(',');
-  const js=await fetch(url).then(r=>r.json()).catch(()=>null);
-  if(!js) return;
-  stockQuotes={};
-  js.quoteResponse.result.forEach(q=>stockQuotes[q.symbol]={price:q.regularMarketPrice,prev:q.regularMarketPreviousClose});
-  paintWatch(); paintStockTrades();
-}
-setInterval(refreshStocks,60_000);
-
-/* =========================================================================
-   4.  STOCK  WATCH-LIST  +  “Paper-Trade”  buttons
-========================================================================= */
-function paintWatch(){
+/*────────────────────────   STOCK SIMULATOR   ───────────────*/
+const stockPortfolio = [];
+stockForm.onsubmit = e=>{
+  e.preventDefault();
+  const sym = stockSymbol.value.toUpperCase();
+  const qty = +stockQty.value;
+  const entry = +stockEntry.value;
+  watchlist.add(sym);
+  fetchStockQuotes();               // immediate refresh
+  const cur  = stockQuotes[sym]?.price ?? entry;
+  const pl   = ((cur-entry)*qty).toFixed(2);
+  stockPortfolio.push({sym,qty,entry,cur,pl});
+  renderStockTable();
+  updateTV(`NASDAQ:${sym}`);
+  stockForm.reset();
+};
+function renderStockTable(){
   const tbl=document.getElementById('stockTable');
   tbl.innerHTML='';
-  [...watchlist].forEach(sym=>{
-    const q=stockQuotes[sym]||{};
-    const color=q.price>=q.prev?'var(--up)':'var(--down)';
+  stockPortfolio.forEach(s=>{
+    const color = s.pl>=0?'lime':'salmon';
     tbl.insertAdjacentHTML('beforeend',`
-      <div class="stock-card" data-sym="${sym}">
-         <h4>${sym} <button class="mini remove" title="Delete">🗑</button></h4>
-         <div>Price: <span style="color:${color}">${q.price?.toFixed(2)||'—'}</span></div>
-         <button class="mini trade">Paper&nbsp;Trade</button>
-      </div>`);
+      <div class="stock-card" data-sym="${s.sym}">
+        <h4>${s.sym}</h4>
+        <div>Entry: ${s.entry.toFixed(2)}</div>
+        <div>Current: ${ (stockQuotes[s.sym]?.price ?? s.cur).toFixed(2) }</div>
+        <div>Qty: ${s.qty}</div>
+        <div class="pl" style="color:${color}">P/L: ${s.pl}</div>
+      </div>` );
   });
-  tbl.querySelectorAll('.trade').forEach(b=>b.onclick=e=>openTradeForm(b.closest('.stock-card').dataset.sym));
-  tbl.querySelectorAll('.remove').forEach(b=>b.onclick=e=>{watchlist.delete(b.closest('.stock-card').dataset.sym);paintWatch();});
-}
-
-/* Quick modal prompt (browser prompt for brevity) */
-function openTradeForm(sym){
-  const qty=+prompt(`Quantity for ${sym}?`,100);
-  if(!qty) return;
-  const entry=+prompt('Entry price?', stockQuotes[sym]?.price||0);
-  if(!entry) return;
-  addStockPosition(sym,qty,entry);
-}
-
-function addStockPosition(sym,qty,entry){
-  const cur = stockQuotes[sym]?.price||entry;
-  const pl  = ((cur-entry)*qty).toFixed(2);
-  stockPortfolio.push({sym,qty,entry,current:cur,pl});
-  paintStockTrades();
-}
-
-function paintStockTrades(){
-  const grid=document.querySelector('.stock-sim');
-  grid.querySelectorAll('.paper-card')?.forEach(n=>n.remove());
-  stockPortfolio.forEach((p,i)=>{
-    const color=p.pl>=0?'lime':'var(--down)';
-    grid.insertAdjacentHTML('beforeend',`
-      <div class="port-card paper-card" data-idx="${i}">
-        <h4>${p.sym} <button class="mini remove">🗑</button></h4>
-        <div>Entry <span>${p.entry.toFixed(2)}</span></div>
-        <div>Current <span>${(stockQuotes[p.sym]?.price||p.current).toFixed(2)}</span></div>
-        <div>Qty <span>${p.qty}</span></div>
-        <div class="pl"><b>P/L</b> <span style="color:${color}">${p.pl}</span></div>
-        <div class="tv-summary-widget" data-symbol="${p.sym}"></div>
-      </div>`);
+  /* clicking a card focuses chart */
+  document.querySelectorAll('.stock-card').forEach(c=>{
+    c.onclick=()=>updateTV(`NASDAQ:${c.dataset.sym}`);
   });
-  grid.querySelectorAll('.paper-card .remove').forEach(btn=>{
-    btn.onclick=e=>{const idx=+btn.closest('.paper-card').dataset.idx;stockPortfolio.splice(idx,1);paintStockTrades();}
-  });
-  loadTVSummaryWidgets();
 }
 
-/* Add-symbol form submit */
-stockForm.onsubmit=e=>{
-  e.preventDefault();
-  watchlist.add(stockSymbol.value.toUpperCase());
-  stockForm.reset(); refreshStocks(); paintWatch();
-};
-
-/* =========================================================================
-   5.  FOREX  PAPER-TRADES  with  Account-Risk %  
-========================================================================= */
-function calcLot(entry,stop,pipValue=0.0001){
-  const bal=10_000;                                // demo account balance
-  const riskPct=parseFloat(acctRisk.value)/100;
-  return Math.round((bal*riskPct)/Math.abs(entry-stop)/pipValue);
-}
-
+/*──────────────  FOREX PORTFOLIO  ─────────────*/
+const fxPositions=[];
 portForm.onsubmit=e=>{
   e.preventDefault();
-  const pair=pPair.value, entry=+pEntry.value, cur=+pCurrent.value;
-  const dir = cur>=entry?'Buy':'Sell';
-  let size  = +pSize.value||0;
+  const pair = pPair.value;
+  const entry= +pEntry.value;
+  const cur  = +pCurrent.value;
+  const size = +pSize.value;
+  const dir  = cur>=entry?'Buy':'Sell';
+  const pl   = ((dir==='Buy'?cur-entry:entry-cur)*size).toFixed(2);
 
   let ai={};
-  if(aiPortToggle.checked&&fxMetrics[pair]){
-      ai = buildAI(pair,dir,entry);
-      if(!size) size = ai.recommendedLot;          // auto-fill if user left blank
+  if(aiPortToggle.checked && fxMetrics[pair]){
+    ai = buildAI(pair,dir,entry);
   }
-  if(!size) { alert('Enter position size or enable AI lot calc'); return; }
-
-  const pl = ((dir==='Buy'?cur-entry:entry-cur)*size).toFixed(2);
   fxPositions.push({...ai,pair,entry,current:cur,size,dir,pl});
-  paintFxTrades();
+  renderFxPortfolio();
   portForm.reset();
 };
-
 function buildAI(pair,dir,entry){
-  const {sma,rsi,closes}=fxMetrics[pair];
-  const atr = closes.slice(-14).reduce((a,v,i,arr)=> a+Math.abs(arr[i]-arr[i-1]||0),0)/14;
+  const {sma,rsi} = fxMetrics[pair];
+  const atr=0.002;                           // placeholder ATR
   const stop = dir==='Buy'?entry-atr:entry+atr;
   const tgt  = dir==='Buy'?entry+2*atr:entry-2*atr;
-  const rr   = Math.abs((tgt-entry)/(entry-stop)).toFixed(2);
-  const lot  = calcLot(entry,stop);
+  const rr   = Math.abs((tgt-entry)/(entry-stop));
+  const confidence = Math.random()<0.5?'Medium':'High';
   return {
-    recommendedLot:lot,
     stop:stop.toFixed(5),target:tgt.toFixed(5),
     sma:sma.toFixed(4),rsi:rsi.toFixed(1),
-    rr,confidence: Math.random()<0.5?'Medium':'High',
-    note:`ATR ${atr.toFixed(5)}`
+    rr:rr.toFixed(2),confidence,
+    note:'ATR model'
   };
 }
-
-function paintFxTrades(){
+function renderFxPortfolio(){
   portGrid.innerHTML='';
-  fxPositions.forEach((p,i)=>{
+  fxPositions.forEach(p=>{
     const live=((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2);
+    saveTradeResult(p,live);
     portGrid.insertAdjacentHTML('beforeend',`
-      <div class="port-card" data-idx="${i}">
-        <h4>${p.pair} <button title="Delete" class="mini remove">🗑</button></h4>
+      <div class="port-card">
+        <h4>${p.pair}</h4>
         <div>Entry <span>${p.entry.toFixed(5)}</span></div>
         <div class="current">Current <span>${p.current.toFixed(5)}</span></div>
-        <div>Lot <span>${p.size.toLocaleString()}</span></div>
+        <div>Size <span>${p.size.toLocaleString()}</span></div>
         ${p.stop?`<div>Stop <span>${p.stop}</span></div>`:''}
         ${p.target?`<div>Target <span>${p.target}</span></div>`:''}
         ${p.rsi?`<div>RSI <span>${p.rsi}</span></div>`:''}
@@ -405,39 +394,107 @@ function paintFxTrades(){
         ${p.confidence?`<div class="prob">${p.confidence}</div>`:''}
         <div class="pl"><b>P/L</b> <span style="color:${live>=0?'lime':'var(--down)'}">${live}</span></div>
         ${p.note?`<div class="ai">${p.note}</div>`:''}
-        <div class="tv-summary-widget" data-symbol="FX:${pairToTV(p.pair)}"></div>
       </div>`);
   });
-  portGrid.querySelectorAll('.remove').forEach(btn=>{
-    btn.onclick=e=>{const i=+btn.closest('.port-card').dataset.idx;fxPositions.splice(i,1);paintFxTrades();}
+  updateWinRate();
+}
+
+/*────────────────────────   CALENDAR RSS   ───────────────────*/
+async function fetchCalendar(){
+  try{
+    const xml=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://www.fxstreet.com/rss/news')).then(r=>r.text());
+    const items=[...new DOMParser().parseFromString(xml,'text/xml').querySelectorAll('item')]
+      .slice(0,8).map(it=>it.querySelector('title').textContent);
+    newsUL.innerHTML=items.map(t=>`<li>⚠️ ${t}</li>`).join('');
+  }catch{newsUL.innerHTML='<li>Feed unavailable</li>';}
+}
+fetchCalendar();
+
+/*────────────────────────   CSV DOWNLOAD   ───────────────────*/
+function genCSV(){
+  const rows=[['TYPE','Symbol/Pair','Dir/Qty','Entry','Current','P/L']];
+  fxPositions.forEach(p=>{
+    rows.push(['FX',p.pair,p.dir,p.entry,p.current,((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2)]);
   });
-  loadTVSummaryWidgets();
-  injectCsvBtn();
+  stockPortfolio.forEach(s=>{
+    rows.push(['STOCK',s.sym,s.qty,s.entry,s.cur ?? s.currentPrice,s.pl]);
+  });
+  return 'data:text/csv;charset=utf-8,'+ rows.map(r=>r.join(',')).join('\n');
+}
+function injectCsvBtn() {
+  if (document.getElementById('dlCsvBtn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'dlCsvBtn';
+  btn.textContent = 'Download Trades CSV';
+  btn.className = 'btn-primary';
+  btn.style.marginTop = '1rem';
+
+  btn.onclick = () => {
+    const uri = genCSV();
+    const a = document.createElement('a');
+    a.href = encodeURI(uri);
+    a.download = 'trades.csv';
+    a.click();
+  };
+  document.querySelector('.stock-sim').appendChild(btn);
+  // 👇 Append under trade history section
+  const historySection = document.getElementById('portGrid') || document.querySelector('.port-grid');
+  if (historySection) historySection.after(btn);
+}
+injectCsvBtn();
+  function loadMiniCharts() {
+  document.querySelectorAll('.mini-chart').forEach(div => {
+    const symbol = div.dataset.symbol || 'FX:EURUSD';
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=15&theme=dark&style=2&hide_top_toolbar=1&hide_legend=1&save_image=0&studies=[]`;
+    iframe.width = '100%';
+    iframe.height = '100';
+    iframe.frameBorder = '0';
+    iframe.scrolling = 'no';
+    iframe.style.borderRadius = '8px';
+    div.innerHTML = ''; // clear before inserting
+    div.appendChild(iframe);
+  });
+}
+window.addEventListener('DOMContentLoaded', loadMiniCharts);
+  function loadTVSummaryWidgets() {
+  document.querySelectorAll('.tv-summary-widget').forEach(div => {
+    const symbol = div.dataset.symbol || 'FX:EURUSD';
+
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      "interval": "1D",
+      "width": "100%",
+      "isTransparent": true,
+      "height": "220",
+      "symbol": symbol,
+      "showIntervalTabs": true,
+      "locale": "en",
+      "colorTheme": "dark"
+    });
+
+    div.innerHTML = ''; // Clear previous widget
+    div.appendChild(script);
+  });
 }
 
-function pairToTV(pr){return pr.replace('/','');}
+// Re-run after each render
+renderPortfolio = (function (orig) {
+  return function () {
+    orig();
+    loadTVSummaryWidgets();
+  };
+})(renderPortfolio);
 
-/* =========================================================================
-   6.  CSV  EXPORT  (keeps only current trades)
-========================================================================= */
-function injectCsvBtn(){
-  if(document.getElementById('dlCsvBtn')) return;
-  const btn=document.createElement('button');
-  btn.id='dlCsvBtn';btn.textContent='Download Trades CSV';btn.className='btn-primary';
-  btn.onclick=()=>{const rows=[['Type','Symbol','Qty/Dir','Entry','Cur','P/L']];
-    fxPositions.forEach(p=>rows.push(['FX',p.pair,p.dir,p.entry,p.current,((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2)]));
-    stockPortfolio.forEach(s=>rows.push(['STK',s.sym,s.qty,s.entry,s.current,( (s.current-s.entry)*s.qty ).toFixed(2)]));
-    const blob=new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='trades.csv';a.click();};
-  document.querySelector('.history-title').after(btn);
-}
-
-/* =========================================================================
-   7.  INITIALISE  (mini-charts + widgets)
-========================================================================= */
-window.addEventListener('DOMContentLoaded',()=>{
-  loadMiniCharts(); loadTVSummaryWidgets(); paintWatch(); paintFxTrades();
-});
+renderStockTable = (function (orig) {
+  return function () {
+    orig();
+    loadTVSummaryWidgets();
+  };
+})(renderStockTable);
 </script>
 </body>
 </html>
