@@ -46,6 +46,7 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
+           <div class="mini-chart" data-symbol="FX:EURUSD"></div>
         </article>
 
         <article class="card red" data-pair="USDJPY">
@@ -53,6 +54,7 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
+            <div class="mini-chart" data-symbol="FX:USDJPY"></div>
         </article>
 
         <article class="card green wide" data-pair="GBPUSD">
@@ -60,7 +62,24 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
+         <div class="mini-chart" data-symbol="FX:GBPUSD"></div>
         </article>
+        <!-- New Cards -->
+  <article class="card" data-pair="USDCAD">
+    <h3>USD/CAD</h3>
+    <p class="rate">Price <span class="price">--</span></p>
+    <p class="sma">SMA-20 <span>--</span></p>
+    <p class="rsi">RSI-14 <span>--</span></p>
+    <div class="mini-chart" data-symbol="FX:USDCAD"></div>
+  </article>
+
+  <article class="card" data-pair="AUDUSD">
+    <h3>AUD/USD</h3>
+    <p class="rate">Price <span class="price">--</span></p>
+    <p class="sma">SMA-20 <span>--</span></p>
+    <p class="rsi">RSI-14 <span>--</span></p>
+    <div class="mini-chart" data-symbol="FX:AUDUSD"></div>
+  </article>
       </div>
     </section>
 
@@ -470,7 +489,21 @@ async function loadYahooData(){
   }));
   updateUICards();    // re-paint the cards
 }
-
+function loadMiniCharts() {
+  document.querySelectorAll('.mini-chart').forEach(div => {
+    const symbol = div.dataset.symbol || 'FX:EURUSD';
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=15&theme=dark&style=2&hide_top_toolbar=1&hide_legend=1&save_image=0&studies=[]`;
+    iframe.width = '100%';
+    iframe.height = '100';
+    iframe.frameBorder = '0';
+    iframe.scrolling = 'no';
+    iframe.style.borderRadius = '8px';
+    div.innerHTML = ''; // clear before inserting
+    div.appendChild(iframe);
+  });
+}
+window.addEventListener('DOMContentLoaded', loadMiniCharts);
 /* call once on load, then every 10 min */
 loadYahooData();
 setInterval(loadYahooData, 600000);
