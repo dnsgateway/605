@@ -285,6 +285,20 @@ body.blurred::after{
   border-radius: 10px;
   overflow: hidden;
 }
+.forex-hours-chart {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+.forex-hours-chart h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+.tv-widget iframe {
+  border-radius: 8px;
+}
 /* ──────────────── TOGGLE SWITCH ──────────────── */
 .toggle{display:inline-flex;align-items:center;gap:.45rem}
 .toggle input{display:none}
