@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -46,7 +46,7 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
-          <div class="mini-chart" data-symbol="FX:EURUSD"></div>
+           <div class="mini-chart" data-symbol="FX:EURUSD"></div>
         </article>
 
         <article class="card red" data-pair="USDJPY">
@@ -54,7 +54,7 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
-          <div class="mini-chart" data-symbol="FX:USDJPY"></div>
+            <div class="mini-chart" data-symbol="FX:USDJPY"></div>
         </article>
 
         <article class="card green wide" data-pair="GBPUSD">
@@ -62,25 +62,9 @@
           <p class="rate">Price <span class="price">--</span></p>
           <p class="sma">SMA-20 <span>--</span></p>
           <p class="rsi">RSI-14 <span>--</span></p>
-           <div class="mini-chart" data-symbol="FX:GBPUSD"></div>
+         <div class="mini-chart" data-symbol="FX:GBPUSD"></div>
         </article>
-        <!-- New Cards -->
-  <article class="card" data-pair="USDCAD">
-    <h3>USD/CAD</h3>
-    <p class="rate">Price <span class="price">--</span></p>
-    <p class="sma">SMA-20 <span>--</span></p>
-    <p class="rsi">RSI-14 <span>--</span></p>
-    <div class="mini-chart" data-symbol="FX:USDCAD"></div>
-  </article>
-
-  <article class="card" data-pair="AUDUSD">
-    <h3>AUD/USD</h3>
-    <p class="rate">Price <span class="price">--</span></p>
-    <p class="sma">SMA-20 <span>--</span></p>
-    <p class="rsi">RSI-14 <span>--</span></p>
-    <div class="mini-chart" data-symbol="FX:AUDUSD"></div>
-  </article>
-</div>
+      </div>
     </section>
 
     <!── 2. MACRO + CHART ──>
@@ -109,28 +93,32 @@
   <h3>Upcoming Events (24 h)</h3>
   <ul id="newsUL"></ul>
 </div>
+      <!-- Forex Market Hours Chart -->
+<div class="forex-hours-chart boxed">
+  <h2>Forex Market Hours</h2>
+  <div class="tv-widget">
+    <iframe src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_6c701&symbol=FX%3AEURUSD&interval=60&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&locale=en"
+            width="100%" height="420" frameborder="0" allowtransparency="true"
+            scrolling="no" allowfullscreen></iframe>
+  </div>
+</div>
  <!-- 📈 STOCK PORTFOLIO SIMULATOR -->
-<!-- Stock watch-list + paper trades -->
-      <section class="stock-sim boxed">
-        <h2>Stock Portfolio Simulator</h2>
-
-        <form id="stockForm" class="stock-form">
-          <label>Ticker
-            <input id="stockSymbol" placeholder="e.g. AAPL" required />
-          </label>
-          <label>Quantity
-            <input type="number" id="stockQty" required />
-          </label>
-          <label>Entry Price
-            <input type="number" id="stockEntry" step="0.01" required />
-          </label>
-          <button type="submit">Add Stock</button>
-        </form>
-
-        <div id="stockTable" class="stock-table"></div>
-        <div class="tv-summary-widget" data-symbol="AAPL"></div>
-      </section>
-    </section>
+<section class="stock-sim">
+  <h2>Stock Portfolio Simulator</h2>
+  <form id="stockForm" class="stock-form">
+    <label>
+      Ticker <input type="text" id="stockSymbol" placeholder="e.g. AAPL" required />
+    </label>
+    <label>
+      Quantity <input type="number" id="stockQty" required />
+    </label>
+    <label>
+      Entry Price <input type="number" id="stockEntry" step="0.01" required />
+    </label>
+    <button type="submit">Add Stock</button>
+  </form>
+  <div id="stockTable" class="stock-table"></div>
+</section>
     </section>
 
 <!--    3. PORTFOLIO SIM -->
@@ -173,8 +161,6 @@
         <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
         <button type="submit">Add Position</button>
       </form>
-      <div class="tv-summary-widget" data-symbol="FX:EURUSD"></div>
- 
 
       <div id="portGrid" class="port-grid">
         <!--  👇  below the portfolio grid -->
@@ -208,242 +194,295 @@
 /******************************************************
   script.js – fixed for new form (pCurrent / pSize)
 ******************************************************/
-/*────────────────────────   GLOBALS   ────────────────────────*/
 feather.replace();
 
-const RATE_REFRESH_MS   = 60_000;     // Forex snapshot (Yahoo) 
-const STOCK_REFRESH_MS  = 60_000;     // Stock quotes refresh
-const YF_LOOKBACK_DAYS  = 90;         // for SMA / RSI calc
-const quoteAPI          = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=';
-
-/*────────────────────────   PAGE ROUTER   ────────────────────*/
-document.querySelectorAll('[data-page]').forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll('.page')
-      .forEach(p=>p.classList.toggle('active',p.id===btn.dataset.page));
+// Page navigation
+document.querySelectorAll('[data-page]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.page').forEach(p =>
+      p.classList.toggle('active', p.id === btn.dataset.page)
+    );
   };
 });
-hamburger.onclick=()=>sidebar.classList.toggle('open');
 
-/*────────────────────────   THEMES   ─────────────────────────*/
-matrixToggle .onchange=e=>document.body.classList.toggle('matrix', e.target.checked);
-blurToggle   .onchange=e=>document.body.classList.toggle('blurred',e.target.checked);
-neonToggle   .onchange=e=>{
-  document.body.classList.toggle('neon', e.target.checked);
-  if(e.target.checked){ matrixToggle.checked=false; document.body.classList.remove('matrix');}
-};
+// Theme toggles
+matrixToggle.onchange = e => document.body.classList.toggle('matrix', e.target.checked);
+blurToggle.onchange = e => document.body.classList.toggle('blurred', e.target.checked);
 
-/*────────────────────────   METRIC STORE   ───────────────────*/
-const fxMetrics   = {};  // { 'EUR/USD': {price,sma,rsi} }
-const stockQuotes = {};  // { 'AAPL': {price,prevClose,change} }
-
-/*────────────────────────   FOREX – Yahoo chart API  ─────────*/
-const FX_PAIRS = {
-  'EUR/USD':'EURUSD=X',
-  'USD/JPY':'USDJPY=X',
-  'GBP/USD':'GBPUSD=X',
-  'AUD/USD':'AUDUSD=X'
-};
-async function loadFxMetrics(){
-  for(const [pair,yf] of Object.entries(FX_PAIRS)){
-    try{
-      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=${YF_LOOKBACK_DAYS}d&interval=1d`;
-      const js = await fetch(url).then(r=>r.json());
-      const {close} = js.chart.result[0].indicators.quote[0];
-      const prc = close.filter(Boolean).at(-1);
-      const sma = close.slice(-20).reduce((a,b)=>a+b,0)/20;
-      let g=0,l=0;
-      for(let i=close.length-15;i<close.length-1;i++){
-        const d = close[i+1]-close[i];
-        d>0?g+=d:l-=d;
-      }
-      const rsi = 100-100/(1+g/(l||.0001));
-      fxMetrics[pair]={price:prc,sma,rsi};
-    }catch(err){console.warn('FX fetch fail',pair,err);}
-  }
-  paintFxCards();
+// AI logic helpers
+function detectPattern(data) {
+  if (!data || data.length < 2) return null;
+  const [prev, last] = data.slice(-2);
+  if (prev.close < prev.open && last.close > last.open && last.close > prev.open && last.open < prev.close) return 'Bullish Engulfing';
+  if (prev.close > prev.open && last.close < last.open && last.open > prev.close && last.close < prev.open) return 'Bearish Engulfing';
+  if (last.high < prev.high && last.low > prev.low) return 'Inside Bar';
+  return null;
 }
-function paintFxCards(){
-  document.querySelectorAll('.rates-grid .card').forEach(card=>{
-    const sym = card.dataset.pair.replace(/([A-Z]+)([A-Z]+)/,'$1/$2');
-    const m   = fxMetrics[sym];
-    if(!m) return;
-    card.querySelector('.price').textContent = m.price.toFixed(5);
-    card.querySelector('.sma span').textContent = m.sma.toFixed(4);
-    card.querySelector('.rsi span').textContent = m.rsi.toFixed(1);
+
+function calculateIndicators(closes) {
+  const sma = closes.slice(-20).reduce((a, c) => a + c, 0) / 20;
+  let gain = 0, loss = 0;
+  for (let i = closes.length - 15; i < closes.length - 1; i++) {
+    const diff = closes[i + 1] - closes[i];
+    if (diff > 0) gain += diff;
+    else loss -= diff;
+  }
+  const rsi = 100 - 100 / (1 + gain / (loss || 0.0001));
+  return { sma, rsi };
+}
+
+// Portfolio logic
+const positions = [];
+
+portForm.onsubmit = e => {
+  e.preventDefault();
+
+  const pair = pPair.value;
+  const entry = parseFloat(pEntry.value);
+  const current = parseFloat(pCurrent.value);
+  const size = parseFloat(pSize.value.replace(/,/g, '')) || 0;
+  const dir = current >= entry ? 'Buy' : 'Sell';
+  const priceDiff = dir === 'Buy' ? (current - entry) : (entry - current);
+  const pl = (priceDiff * size).toFixed(2);
+
+  const aiEnabled = aiPortToggle.checked;
+  let stop = '--', tgt = '--', rsi = '--', sma = '--', rr = '--', conf = '--', note = '';
+
+  if (aiEnabled && barsDB[pair]) {
+    const bars = barsDB[pair];
+    const closes = bars.map(b => b.close);
+    const { sma: smaVal, rsi: rsiVal } = calculateIndicators(closes);
+    const atr = bars.slice(-14).reduce((a, b) => a + (b.high - b.low), 0) / 14;
+
+    stop = dir === 'Buy' ? (entry - atr).toFixed(4) : (entry + atr).toFixed(4);
+    tgt = dir === 'Buy' ? (entry + 2 * atr).toFixed(4) : (entry - 2 * atr).toFixed(4);
+    rsi = rsiVal.toFixed(1);
+    sma = smaVal.toFixed(4);
+    rr = (Math.abs((tgt - entry) / (entry - stop))).toFixed(2);
+    conf = rsiVal > 70 || rsiVal < 30 ? 'High' : 'Medium';
+    const pattern = detectPattern(bars);
+    if (pattern) note = `Detected: ${pattern}`;
+  }
+
+  positions.push({ pair, entry, current, size, dir, pl, stop, tgt, rsi, sma, rr, conf, note });
+  renderPositions();
+};
+
+function renderPositions() {
+  portGrid.innerHTML = '';
+  positions.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'port-card';
+    card.innerHTML = `
+      <h4>${p.pair}</h4>
+      <div>Entry: <span>${p.entry.toFixed(5)}</span></div>
+      <div class="current">Current: <span>${p.current.toFixed(5)}</span></div>
+      <div>Position: <span>${p.dir}</span></div>
+      <div>Size: <span>${p.size.toLocaleString()}</span></div>
+      <div class="pl">P/L <span style="color:${p.pl >= 0 ? 'lime' : 'salmon'}">${p.pl}</span></div>
+      ${p.stop !== '--' ? `<div>Stop Loss: <span>${p.stop}</span></div>` : ''}
+      ${p.tgt !== '--' ? `<div>Target: <span>${p.tgt}</span></div>` : ''}
+      ${p.rsi !== '--' ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
+      ${p.sma !== '--' ? `<div>SMA-20: <span>${p.sma}</span></div>` : ''}
+      ${p.rr !== '--' ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
+      ${p.conf !== '--' ? `<div>Confidence: <span>${p.conf}</span></div>` : ''}
+      ${p.note ? `<div class="ai">${p.note}</div>` : ''}
+    `;
+    portGrid.appendChild(card);
   });
 }
-/* first load + interval */
-loadFxMetrics(); setInterval(loadFxMetrics,RATE_REFRESH_MS);
-
-/*────────────────────────   STOCK QUOTES   ───────────────────*/
-const watchlist = new Set();
-function fetchStockQuotes(){
-  if(!watchlist.size) return;
-  const url = quoteAPI + [...watchlist].join(',');
-  fetch(url).then(r=>r.json()).then(js=>{
-    js.quoteResponse.result.forEach(q=>{
-      stockQuotes[q.symbol]={price:q.regularMarketPrice,prev:q.regularMarketPreviousClose};
-    });
-    paintStockTable();
-    if(activeChartSymbol) updateTV(activeChartSymbol);  // refresh if displayed
-  }).catch(e=>console.warn('Stock quote fetch err',e));
-}
-setInterval(fetchStockQuotes,STOCK_REFRESH_MS);
-
-/*────────────────────────   TRADINGVIEW HOOK   ───────────────*/
-const tvFrame = document.getElementById('tvChart');
-const tvBase  = 'https://s.tradingview.com/widgetembed/?interval=30&theme=dark&style=1&symbol=';
-let   activeChartSymbol = 'FX:EURUSD';
-function updateTV(sym){
-  // TV FOREX symbols use FX: prefix, stocks plain (eg. NASDAQ:AAPL) – simple heuristic:
-  activeChartSymbol = sym.includes('/') ? `FX:${sym.replace('/','')}` : sym;
-  tvFrame.src = `${tvBase}${encodeURIComponent(activeChartSymbol)}`;
-}
-
-/* click any FX card => update chart */
-document.querySelectorAll('.rates-grid .card').forEach(c=>{
-  c.onclick=()=>updateTV(c.dataset.pair.includes('/')?c.dataset.pair.replace(/([A-Z]+)([A-Z]+)/,'$1/$2'):c.dataset.pair);
-});
-
-/*────────────────────────   STOCK SIMULATOR   ───────────────*/
 const stockPortfolio = [];
-stockForm.onsubmit = e=>{
+
+document.getElementById('stockForm').onsubmit = function (e) {
   e.preventDefault();
-  const sym = stockSymbol.value.toUpperCase();
+  const symbol = stockSymbol.value.toUpperCase();
   const qty = +stockQty.value;
   const entry = +stockEntry.value;
-  watchlist.add(sym);
-  fetchStockQuotes();               // immediate refresh
-  const cur  = stockQuotes[sym]?.price ?? entry;
-  const pl   = ((cur-entry)*qty).toFixed(2);
-  stockPortfolio.push({sym,qty,entry,cur,pl});
+
+  // Simulate current price (replace with API call if desired)
+  const currentPrice = entry + (Math.random() - 0.5) * 5; // Simulate ±$2.5 swing
+  const pl = ((currentPrice - entry) * qty).toFixed(2);
+
+  stockPortfolio.push({ symbol, qty, entry, currentPrice, pl });
   renderStockTable();
-  updateTV(`NASDAQ:${sym}`);
-  stockForm.reset();
 };
-function renderStockTable(){
-  const tbl=document.getElementById('stockTable');
-  tbl.innerHTML='';
-  stockPortfolio.forEach(s=>{
-    const color = s.pl>=0?'lime':'salmon';
-    tbl.insertAdjacentHTML('beforeend',`
-      <div class="stock-card" data-sym="${s.sym}">
-        <h4>${s.sym}</h4>
-        <div>Entry: ${s.entry.toFixed(2)}</div>
-        <div>Current: ${ (stockQuotes[s.sym]?.price ?? s.cur).toFixed(2) }</div>
-        <div>Qty: ${s.qty}</div>
-        <div class="pl" style="color:${color}">P/L: ${s.pl}</div>
-      </div>` );
-  });
-  /* clicking a card focuses chart */
-  document.querySelectorAll('.stock-card').forEach(c=>{
-    c.onclick=()=>updateTV(`NASDAQ:${c.dataset.sym}`);
+
+function renderStockTable() {
+  const table = document.getElementById('stockTable');
+  table.innerHTML = '';
+  stockPortfolio.forEach(stock => {
+    const color = stock.pl >= 0 ? 'lime' : 'salmon';
+    table.innerHTML += `
+      <div class="stock-card">
+        <h4>${stock.symbol}</h4>
+        <div>Entry Price: ${stock.entry.toFixed(2)}</div>
+        <div>Current Price: ${stock.currentPrice.toFixed(2)}</div>
+        <div>Quantity: ${stock.qty}</div>
+        <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
+      </div>
+    `;
   });
 }
-
-/*──────────────  FOREX PORTFOLIO  ─────────────*/
-const fxPositions=[];
-portForm.onsubmit=e=>{
-  e.preventDefault();
-  const pair = pPair.value;
-  const entry= +pEntry.value;
-  const cur  = +pCurrent.value;
-  const size = +pSize.value;
-  const dir  = cur>=entry?'Buy':'Sell';
-  const pl   = ((dir==='Buy'?cur-entry:entry-cur)*size).toFixed(2);
-
-  let ai={};
-  if(aiPortToggle.checked && fxMetrics[pair]){
-    ai = buildAI(pair,dir,entry);
-  }
-  fxPositions.push({...ai,pair,entry,current:cur,size,dir,pl});
-  renderFxPortfolio();
-  portForm.reset();
-};
-function buildAI(pair,dir,entry){
-  const {sma,rsi} = fxMetrics[pair];
-  const atr=0.002;                           // placeholder ATR
-  const stop = dir==='Buy'?entry-atr:entry+atr;
-  const tgt  = dir==='Buy'?entry+2*atr:entry-2*atr;
-  const rr   = Math.abs((tgt-entry)/(entry-stop));
-  const confidence = Math.random()<0.5?'Medium':'High';
-  return {
-    stop:stop.toFixed(5),target:tgt.toFixed(5),
-    sma:sma.toFixed(4),rsi:rsi.toFixed(1),
-    rr:rr.toFixed(2),confidence,
-    note:'ATR model'
-  };
+/*****************  A.  CONTINUOUS LEARNING BADGE  *****************/
+const logKey='fx_trades_log';
+function saveTradeResult(p,livePL){
+  const log = JSON.parse(localStorage.getItem(logKey)||'[]');
+  log.push({ts:Date.now(), win: livePL>0});
+  localStorage.setItem(logKey,JSON.stringify(log.slice(-200))); // keep 200
 }
-function renderFxPortfolio(){
-  portGrid.innerHTML='';
-  fxPositions.forEach(p=>{
-    const live=((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2);
-    saveTradeResult(p,live);
-    portGrid.insertAdjacentHTML('beforeend',`
-      <div class="port-card">
-        <h4>${p.pair}</h4>
-        <div>Entry <span>${p.entry.toFixed(5)}</span></div>
-        <div class="current">Current <span>${p.current.toFixed(5)}</span></div>
-        <div>Size <span>${p.size.toLocaleString()}</span></div>
-        ${p.stop?`<div>Stop <span>${p.stop}</span></div>`:''}
-        ${p.target?`<div>Target <span>${p.target}</span></div>`:''}
-        ${p.rsi?`<div>RSI <span>${p.rsi}</span></div>`:''}
-        ${p.sma?`<div>SMA-20 <span>${p.sma}</span></div>`:''}
-        ${p.rr?`<div>R/R <span>${p.rr}</span></div>`:''}
-        ${p.confidence?`<div class="prob">${p.confidence}</div>`:''}
-        <div class="pl"><b>P/L</b> <span style="color:${live>=0?'lime':'var(--down)'}">${live}</span></div>
-        ${p.note?`<div class="ai">${p.note}</div>`:''}
-      </div>`);
-  });
-  updateWinRate();
+function updateWinRate(){
+  const log = JSON.parse(localStorage.getItem(logKey)||'[]');
+  const rate = log.length? (100*log.filter(t=>t.win).length/log.length).toFixed(0)+'%' : '—';
+  aiStats.textContent = `AI Win-rate ${rate}`;
 }
+updateWinRate();
 
-/*────────────────────────   CALENDAR RSS   ───────────────────*/
+/*****************  B.  MACRO EVENT FILTER  *****************/
 async function fetchCalendar(){
+  const rss='https://www.fxstreet.com/rss/news';
   try{
-    const xml=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://www.fxstreet.com/rss/news')).then(r=>r.text());
-    const items=[...new DOMParser().parseFromString(xml,'text/xml').querySelectorAll('item')]
-      .slice(0,8).map(it=>it.querySelector('title').textContent);
-    newsUL.innerHTML=items.map(t=>`<li>⚠️ ${t}</li>`).join('');
-  }catch{newsUL.innerHTML='<li>Feed unavailable</li>';}
+    const xml = await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(rss)).then(r=>r.text());
+    const items=[...new window.DOMParser().parseFromString(xml,'text/xml').querySelectorAll('item')]
+      .slice(0,8)  // first few
+      .map(it=>it.querySelector('title').textContent);
+    newsUL.innerHTML = items.map(t=>`<li>⚠️ ${t}</li>`).join('');
+  }catch{ newsUL.innerHTML='<li>No feed offline.</li>'; }
 }
 fetchCalendar();
 
-/*────────────────────────   CSV DOWNLOAD   ───────────────────*/
-function genCSV(){
-  const rows=[['TYPE','Symbol/Pair','Dir/Qty','Entry','Current','P/L']];
-  fxPositions.forEach(p=>{
-    rows.push(['FX',p.pair,p.dir,p.entry,p.current,((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2)]);
-  });
-  stockPortfolio.forEach(s=>{
-    rows.push(['STOCK',s.sym,s.qty,s.entry,s.cur ?? s.currentPrice,s.pl]);
-  });
-  return 'data:text/csv;charset=utf-8,'+ rows.map(r=>r.join(',')).join('\n');
+/*****************  C.  ADAPTIVE RISK ENGINE  *****************/
+function calcSize(entry,stop,pipVal,acctBal){
+  const riskPct=parseFloat(acctRisk.value)/100;
+  return Math.round( (acctBal*riskPct) / Math.abs(entry-stop) / pipVal );
 }
-function injectCsvBtn() {
-  if (document.getElementById('dlCsvBtn')) return;
 
-  const btn = document.createElement('button');
-  btn.id = 'dlCsvBtn';
-  btn.textContent = 'Download Trades CSV';
-  btn.className = 'btn-primary';
-  btn.style.marginTop = '1rem';
+/*****************  D.  PROBABILITY ENGINE  *****************/
+function hitProbability(closes,target,dir){
+  const sims=300, wins=closes.slice(-60); // last 60d
+  let hit=0;
+  for(let i=0;i<sims;i++){
+    const path=[...wins];
+    for(let d=0;d<10;d++){ // 10-day horizon
+      const step=(Math.random()-.5)*0.004; // crude ±0.2%
+      path.push(path.at(-1)*(1+step));
+      if(dir==='Buy' && path.at(-1)>=target){hit++;break;}
+      if(dir==='Sell'&& path.at(-1)<=target){hit++;break;}
+    }
+  }
+  return (100*hit/sims).toFixed(0)+'%';
+}
 
-  btn.onclick = () => {
-    const uri = genCSV();
-    const a = document.createElement('a');
-    a.href = encodeURI(uri);
-    a.download = 'trades.csv';
-    a.click();
+/*****************  E.  BUILD-AI (multi-TF / ATR / prob)  *****************/
+function buildAI(pair,dir,entry,tf='D',riskBal=10000){
+  const bars=barsDB[pair]?.[tf]||[];           // bars by timeframe
+  if(bars.length<21)return {note:'No data'};
+  const closes=bars.map(b=>b.close),
+        atr = bars.slice(-14).reduce((a,b)=>a+(b.high-b.low),0)/14;
+
+  const stop = dir==='Buy'?entry-atr:entry+atr;
+  const tgt  = dir==='Buy'?entry+2*atr:entry-2*atr;
+  const size = calcSize(entry,stop,0.0001,riskBal);   // pipVal simplified
+
+  const {sma,rsi}=calcIndicators(closes);             // reuse previous helper
+  const prob = hitProbability(closes,tgt,dir);
+
+  return{
+    stop:stop.toFixed(4),target:tgt.toFixed(4),
+    sma:sma.toFixed(4),rsi:rsi.toFixed(1),
+    rr:(Math.abs((tgt-entry)/(entry-stop))).toFixed(2),
+    confidence:prob,size,
+    note:`ATR ${atr.toFixed(4)} (${tf})`
   };
-  document.querySelector('.stock-sim').appendChild(btn);
-  // 👇 Append under trade history section
-  const historySection = document.getElementById('portGrid') || document.querySelector('.port-grid');
-  if (historySection) historySection.after(btn);
 }
-injectCsvBtn();
-  function loadMiniCharts() {
+
+/*****************  F.  PORTFOLIO SUBMIT (hooks all engines)  *****************/
+portForm.onsubmit=e=>{
+  e.preventDefault();
+  const pair=pPair.value, entry=+pEntry.value, cur=+pCurrent.value, acctBal=10000;
+  const dir=cur>=entry?'Buy':'Sell';
+  let ai={};
+  if(aiPortToggle.checked){
+    const tf=tfSelect.value;
+    ai=buildAI(pair,dir,entry,tf,acctBal);
+  }
+  const pos={pair,entry,current:cur,dir,size:+pSize.value,...ai};
+  positions.push(pos);
+  renderPortfolio();
+};
+
+/*****************  G.  RENDER w/ AI extras + win-rate learn  *****************/
+function renderPortfolio(){
+  portGrid.innerHTML='';
+  positions.forEach(p=>{
+    const livePL=((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2);
+    saveTradeResult(p,livePL);   // learn
+    portGrid.insertAdjacentHTML('beforeend',`
+      <div class="port-card">
+        <h4>${p.pair}</h4>
+        <div>Entry <span>${p.entry.toFixed(4)}</span></div>
+        <div class="current">Current <span>${p.current.toFixed(4)}</span></div>
+        <div>Size <span>${p.size.toLocaleString()}</span></div>
+        ${p.stop? `<div>Stop <span>${p.stop}</span></div>`:''}
+        ${p.target? `<div>Target <span>${p.target}</span></div>`:''}
+        ${p.rsi? `<div>RSI <span>${p.rsi}</span></div>`:''}
+        ${p.sma? `<div>SMA-20 <span>${p.sma}</span></div>`:''}
+        ${p.rr? `<div>R/R <span>${p.rr}</span></div>`:''}
+        ${p.confidence? `<div class="prob">Hit Prob: ${p.confidence}</div>`:''}
+        <div class="pl"><b>P/L</b> <span style="color:${livePL>=0?'lime':'var(--down)'}">${livePL}</span></div>
+        ${p.note? `<div class="ai">${p.note}</div>`:''}
+      </div>`);}
+  );
+  updateWinRate();
+}
+// Dummy barsDB for demonstration (replace with actual OHLC fetch)
+const barsDB = {
+  'EUR/USD': Array.from({ length: 60 }, (_, i) => {
+    const base = 1.10 + 0.002 * i;
+    return { open: base, high: base + 0.0015, low: base - 0.0015, close: base + 0.0005 };
+  })
+};
+  /****************************************************************
+  ADD-ONS:  neon theme toggle  +  Yahoo-Finance metrics
+****************************************************************/
+
+/* ── Theme toggle ── */
+neonToggle.onchange = e => {
+  document.body.classList.toggle('neon', e.target.checked);
+  // ensure matrix + neon aren't active together
+  if(e.target.checked) matrixToggle.checked = false, document.body.classList.remove('matrix');
+};
+
+/* --------------  Yahoo-Finance data loader -------------- */
+const YF_SYMBOLS = {
+  'EURUSD=X':'EUR/USD',
+  'USDJPY=X':'USD/JPY',
+  'GBPUSD=X':'GBP/USD',
+  'AUDUSD=X':'AUD/USD'
+};
+
+async function loadYahooData(){
+  await Promise.all(Object.entries(YF_SYMBOLS).map(async ([yf,pair])=>{
+    try{
+      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d`;
+      const js = await fetch(url).then(r=>r.json());
+      const res = js.chart.result[0];
+      const close = res.indicators.quote[0].close.filter(n=>n);  // strip nulls
+      const price = close.at(-1);
+      const sma = close.slice(-20).reduce((a,b)=>a+b,0)/20;
+
+      let gain=0,loss=0;
+      for(let i=close.length-15;i<close.length-1;i++){
+        const diff = close[i+1]-close[i];
+        diff>0?gain+=diff:loss-=diff;
+      }
+      const rsi = 100-100/(1+gain/(loss||.0001));
+
+      metrics[pair] = {...(metrics[pair]||{}), price, sma, rsi };
+    }catch(err){console.warn('Yahoo fetch fail',yf,err);}
+  }));
+  updateUICards();    // re-paint the cards
+}
+function loadMiniCharts() {
   document.querySelectorAll('.mini-chart').forEach(div => {
     const symbol = div.dataset.symbol || 'FX:EURUSD';
     const iframe = document.createElement('iframe');
@@ -458,43 +497,9 @@ injectCsvBtn();
   });
 }
 window.addEventListener('DOMContentLoaded', loadMiniCharts);
-  function loadTVSummaryWidgets() {
-  document.querySelectorAll('.tv-summary-widget').forEach(div => {
-    const symbol = div.dataset.symbol || 'FX:EURUSD';
-
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      "interval": "1D",
-      "width": "100%",
-      "isTransparent": true,
-      "height": "220",
-      "symbol": symbol,
-      "showIntervalTabs": true,
-      "locale": "en",
-      "colorTheme": "dark"
-    });
-
-    div.innerHTML = ''; // Clear previous widget
-    div.appendChild(script);
-  });
-}
-
-// Re-run after each render
-renderPortfolio = (function (orig) {
-  return function () {
-    orig();
-    loadTVSummaryWidgets();
-  };
-})(renderPortfolio);
-
-renderStockTable = (function (orig) {
-  return function () {
-    orig();
-    loadTVSummaryWidgets();
-  };
-})(renderStockTable);
+/* call once on load, then every 10 min */
+loadYahooData();
+setInterval(loadYahooData, 600000);
 </script>
 </body>
 </html>
