@@ -1,8 +1,6 @@
 
 /************************************
-  
-F
-orex Simulator – COMPLETE STYLES
+  Forex Simulator – COMPLETE STYLES
   (2025-06 update)
 ************************************/
 
@@ -11,27 +9,11 @@ orex Simulator – COMPLETE STYLES
   --bg:#001323;           /* main background */
   --panel:#071b2d;        /* cards / sidebar */
   --border:#132942;
-  --accent:#00d1
-f
-
-f
-;       /* neon-blue accent */
-  --txt:#e8
-f
-1
-f
-
-f
-;          /* primary text */
+  --accent:#00d1ff;       /* neon-blue accent */
+  --txt:#e8f1ff;          /* primary text */
   --sub:#6bbde0;          /* secondary text */
   --up:#20e0a0;           /* green up color */
-  --down:#
-f
-
-f
-4
-f
-7e;         /* red down color */
+  --down:#ff4f7e;         /* red down color */
 }
 
 /* solid outline requested */
@@ -41,38 +23,12 @@ f
 body.neon{
   --bg:#001010;
   --panel:#002326;
-  --border:#05
-f
-
-f
-b8;
-  --accent:#05
-f
-
-f
-b8;
-  --txt:#b7
-f
-
-f
-
-f
-b;
-  --sub:#57
-f
-
-f
-c4;
-  --up:#29
-f
-
-f
-9a;
-  --down:#
-f
-
-f
-6b9b;
+  --border:#05ffb8;
+  --accent:#05ffb8;
+  --txt:#b7fffb;
+  --sub:#57ffc4;
+  --up:#29ff9a;
+  --down:#ff6b9b;
 }
 body.neon .boxed{box-shadow:0 0 5px var(--accent);}
 
@@ -329,7 +285,6 @@ body.blurred::after{
   border-radius: 10px;
   overflow: hidden;
 }
-
 /* ──────────────── TOGGLE SWITCH ──────────────── */
 .toggle{display:inline-flex;align-items:center;gap:.45rem}
 .toggle input{display:none}
