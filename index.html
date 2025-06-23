@@ -571,14 +571,7 @@ function updateMarketStatus() {
         const minsLeft = open - utcMinutes;
         status = `Opening in ${minsLeft} min${minsLeft > 1 ? 's' : ''}`;
       }
-    }
-
-    row.querySelector("td:last-child").textContent = status;
-    row.classList.toggle("open", highlight);
-  });
-}
-
-updateMarketStatus();
+      updateMarketStatus();
 setInterval(updateMarketStatus, 60000); // update every 60s
   const marketSchedule = [
   { name: "Sydney", open: "06:00", close: "14:00", tz: "Australia/Sydney" },
@@ -634,6 +627,14 @@ function updateMarketStatus() {
   const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
   document.querySelector('.market-time').textContent = `Local Time: ${nowStr}`;
 }
+    }
+
+    row.querySelector("td:last-child").textContent = status;
+    row.classList.toggle("open", highlight);
+  });
+}
+
+
 
 // Initial load and auto-refresh
 updateMarketStatus();
