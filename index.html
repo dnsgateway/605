@@ -533,6 +533,55 @@ window.addEventListener('DOMContentLoaded', loadMiniCharts);
 /* call once on load, then every 10 min */
 loadYahooData();
 setInterval(loadYahooData, 600000);
+  <script>
+const marketHours = [
+  { market: "Sydney", open: "06:00", close: "14:00" },
+  { market: "Tokyo", open: "08:00", close: "16:00" },
+  { market: "London", open: "15:00", close: "23:30" },
+  { market: "New York", open: "20:00", close: "05:00" } // closes next day
+];
+
+function parseTime(timeStr) {
+  const [h, m] = timeStr.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function updateMarketStatus() {
+  const now = new Date();
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const tableRows = document.querySelectorAll(".market-hours-table tbody tr");
+
+  marketHours.forEach((mkt, i) => {
+    const open = parseTime(mkt.open);
+    const close = parseTime(mkt.close);
+    const row = tableRows[i];
+    let status = "Closed";
+    let highlight = false;
+
+    if (close < open) {
+      // session wraps over midnight
+      if (utcMinutes >= open || utcMinutes < close) {
+        status = "Open";
+        highlight = true;
+      }
+    } else {
+      if (utcMinutes >= open && utcMinutes < close) {
+        status = "Open";
+        highlight = true;
+      } else if (utcMinutes >= open - 60 && utcMinutes < open) {
+        const minsLeft = open - utcMinutes;
+        status = `Opening in ${minsLeft} min${minsLeft > 1 ? 's' : ''}`;
+      }
+    }
+
+    row.querySelector("td:last-child").textContent = status;
+    row.classList.toggle("open", highlight);
+  });
+}
+
+updateMarketStatus();
+setInterval(updateMarketStatus, 60000); // update every 60s
+</script>
 </script>
 </body>
 </html>
