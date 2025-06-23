@@ -533,7 +533,6 @@ window.addEventListener('DOMContentLoaded', loadMiniCharts);
 /* call once on load, then every 10 min */
 loadYahooData();
 setInterval(loadYahooData, 600000);
-  <script>
 const marketHours = [
   { market: "Sydney", open: "06:00", close: "14:00" },
   { market: "Tokyo", open: "08:00", close: "16:00" },
@@ -581,7 +580,6 @@ function updateMarketStatus() {
 
 updateMarketStatus();
 setInterval(updateMarketStatus, 60000); // update every 60s
-</script>
 </script>
 </body>
 </html>
