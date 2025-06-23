@@ -243,64 +243,53 @@ document.querySelectorAll('[data-page]').forEach(btn => {
 matrixToggle.onchange = e => document.body.classList.toggle('matrix', e.target.checked);
 blurToggle.onchange = e => document.body.classList.toggle('blurred', e.target.checked);
 
-// AI logic helpers
-function detectPattern(data) {
-  if (!data || data.length < 2) return null;
-  const [prev, last] = data.slice(-2);
-  if (prev.close < prev.open && last.close > last.open && last.close > prev.open && last.open < prev.close) return 'Bullish Engulfing';
-  if (prev.close > prev.open && last.close < last.open && last.open > prev.close && last.close < prev.open) return 'Bearish Engulfing';
-  if (last.high < prev.high && last.low > prev.low) return 'Inside Bar';
-  return null;
-}
-
-function calculateIndicators(closes) {
-  const sma = closes.slice(-20).reduce((a, c) => a + c, 0) / 20;
-  let gain = 0, loss = 0;
-  for (let i = closes.length - 15; i < closes.length - 1; i++) {
-    const diff = closes[i + 1] - closes[i];
-    if (diff > 0) gain += diff;
-    else loss -= diff;
-  }
-  const rsi = 100 - 100 / (1 + gain / (loss || 0.0001));
-  return { sma, rsi };
-}
-
-// Portfolio logic
-const positions = [];
-
-portForm.onsubmit = e => {
-  e.preventDefault();
-
-  const pair = pPair.value;
-  const entry = parseFloat(pEntry.value);
-  const current = parseFloat(pCurrent.value);
-  const size = parseFloat(pSize.value.replace(/,/g, '')) || 0;
-  const dir = current >= entry ? 'Buy' : 'Sell';
-  const priceDiff = dir === 'Buy' ? (current - entry) : (entry - current);
-  const pl = (priceDiff * size).toFixed(2);
-
-  const aiEnabled = aiPortToggle.checked;
-  let stop = '--', tgt = '--', rsi = '--', sma = '--', rr = '--', conf = '--', note = '';
-
-  if (aiEnabled && barsDB[pair]) {
-    const bars = barsDB[pair];
-    const closes = bars.map(b => b.close);
-    const { sma: smaVal, rsi: rsiVal } = calculateIndicators(closes);
-    const atr = bars.slice(-14).reduce((a, b) => a + (b.high - b.low), 0) / 14;
-
-    stop = dir === 'Buy' ? (entry - atr).toFixed(4) : (entry + atr).toFixed(4);
-    tgt = dir === 'Buy' ? (entry + 2 * atr).toFixed(4) : (entry - 2 * atr).toFixed(4);
-    rsi = rsiVal.toFixed(1);
-    sma = smaVal.toFixed(4);
-    rr = (Math.abs((tgt - entry) / (entry - stop))).toFixed(2);
-    conf = rsiVal > 70 || rsiVal < 30 ? 'High' : 'Medium';
-    const pattern = detectPattern(bars);
-    if (pattern) note = `Detected: ${pattern}`;
-  }
-
-  positions.push({ pair, entry, current, size, dir, pl, stop, tgt, rsi, sma, rr, conf, note });
-  renderPositions();
+// Load Yahoo data (price, SMA, RSI)
+const YF_SYMBOLS = {
+  'EURUSD=X': 'EUR/USD',
+  'USDJPY=X': 'USD/JPY',
+  'GBPUSD=X': 'GBP/USD',
+  'AUDUSD=X': 'AUD/USD'
 };
+
+async function loadYahooData() {
+  await Promise.all(Object.entries(YF_SYMBOLS).map(async ([yf, pair]) => {
+    try {
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d`;
+      const js = await fetch(url).then(r => r.json());
+      const res = js.chart.result[0];
+      const close = res.indicators.quote[0].close.filter(n => n);
+      const price = close.at(-1);
+      const sma = close.slice(-20).reduce((a, b) => a + b, 0) / 20;
+
+      let gain = 0, loss = 0;
+      for (let i = close.length - 15; i < close.length - 1; i++) {
+        const diff = close[i + 1] - close[i];
+        diff > 0 ? gain += diff : loss -= diff;
+      }
+      const rsi = 100 - 100 / (1 + gain / (loss || 0.0001));
+
+      metrics[pair] = { price, sma, rsi };
+    } catch (err) {
+      console.warn('Yahoo fetch fail:', yf, err);
+    }
+  }));
+  updateUICards();
+}
+
+function updateUICards() {
+  document.querySelectorAll('.card').forEach(card => {
+    const pair = card.dataset.pair;
+    const data = metrics[pair];
+    if (!data) return;
+
+    const priceEl = card.querySelector('.price');
+    const smaEl = card.querySelector('.sma span');
+    const rsiEl = card.querySelector('.rsi span');
+
+    if (priceEl) priceEl.textContent = data.price.toFixed(5);
+    if (smaEl) smaEl.textContent = data.sma.toFixed(5);
+    if (rsiEl) rsiEl.textContent = data.rsi.toFixed(1);
+  })
 
 function renderPositions() {
   portGrid.innerHTML = '';
