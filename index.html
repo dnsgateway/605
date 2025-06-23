@@ -230,6 +230,9 @@
 ******************************************************/
 feather.replace();
 
+// Metrics store
+const metrics = {};
+
 // Page navigation
 document.querySelectorAll('[data-page]').forEach(btn => {
   btn.onclick = () => {
@@ -242,6 +245,13 @@ document.querySelectorAll('[data-page]').forEach(btn => {
 // Theme toggles
 matrixToggle.onchange = e => document.body.classList.toggle('matrix', e.target.checked);
 blurToggle.onchange = e => document.body.classList.toggle('blurred', e.target.checked);
+neonToggle.onchange = e => {
+  document.body.classList.toggle('neon', e.target.checked);
+  if (e.target.checked) {
+    matrixToggle.checked = false;
+    document.body.classList.remove('matrix');
+  }
+};
 
 // Load Yahoo data (price, SMA, RSI)
 const YF_SYMBOLS = {
@@ -289,8 +299,8 @@ function updateUICards() {
     if (priceEl) priceEl.textContent = data.price.toFixed(5);
     if (smaEl) smaEl.textContent = data.sma.toFixed(5);
     if (rsiEl) rsiEl.textContent = data.rsi.toFixed(1);
-  })
-
+  });
+}
 function renderPositions() {
   portGrid.innerHTML = '';
   positions.forEach(p => {
@@ -314,38 +324,7 @@ function renderPositions() {
     portGrid.appendChild(card);
   });
 }
-// const stockPortfolio = [];
 
-// document.getElementById('stockForm').onsubmit = function (e) {
-//   e.preventDefault();
-//   const symbol = stockSymbol.value.toUpperCase();
-//   const qty = +stockQty.value;
-//   const entry = +stockEntry.value;
-
-//   // Simulate current price (replace with API call if desired)
-//   const currentPrice = entry + (Math.random() - 0.5) * 5; // Simulate ±$2.5 swing
-//   const pl = ((currentPrice - entry) * qty).toFixed(2);
-
-//   stockPortfolio.push({ symbol, qty, entry, currentPrice, pl });
-//   renderStockTable();
-// };
-
-// function renderStockTable() {
-//   const table = document.getElementById('stockTable');
-//   table.innerHTML = '';
-//   stockPortfolio.forEach(stock => {
-//     const color = stock.pl >= 0 ? 'lime' : 'salmon';
-//     table.innerHTML += `
-//       <div class="stock-card">
-//         <h4>${stock.symbol}</h4>
-//         <div>Entry Price: ${stock.entry.toFixed(2)}</div>
-//         <div>Current Price: ${stock.currentPrice.toFixed(2)}</div>
-//         <div>Quantity: ${stock.qty}</div>
-//         <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
-//       </div>
-//     `;
-//   });
-// }
 /*****************  A.  CONTINUOUS LEARNING BADGE  *****************/
 const logKey='fx_trades_log';
 function saveTradeResult(p,livePL){
