@@ -484,7 +484,39 @@ neonToggle.onchange = e => {
   // ensure matrix + neon aren't active together
   if(e.target.checked) matrixToggle.checked = false, document.body.classList.remove('matrix');
 };
+ /*────────────────────────   CSV DOWNLOAD   ───────────────────*/
+function genCSV(){
+  const rows=[['TYPE','Symbol/Pair','Dir/Qty','Entry','Current','P/L']];
+  fxPositions.forEach(p=>{
+    rows.push(['FX',p.pair,p.dir,p.entry,p.current,((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2)]);
+  });
+  stockPortfolio.forEach(s=>{
+    rows.push(['STOCK',s.sym,s.qty,s.entry,s.cur ?? s.currentPrice,s.pl]);
+  });
+  return 'data:text/csv;charset=utf-8,'+ rows.map(r=>r.join(',')).join('\n');
+}
+function injectCsvBtn() {
+  if (document.getElementById('dlCsvBtn')) return;
 
+  const btn = document.createElement('button');
+  btn.id = 'dlCsvBtn';
+  btn.textContent = 'Download Trades CSV';
+  btn.className = 'btn-primary';
+  btn.style.marginTop = '1rem';
+
+  btn.onclick = () => {
+    const uri = genCSV();
+    const a = document.createElement('a');
+    a.href = encodeURI(uri);
+    a.download = 'trades.csv';
+    a.click();
+  };
+  document.querySelector('.stock-sim').appendChild(btn);
+  // 👇 Append under trade history section
+  const historySection = document.getElementById('portGrid') || document.querySelector('.port-grid');
+  if (historySection) historySection.after(btn);
+}
+injectCsvBtn();
 /* --------------  Yahoo-Finance data loader -------------- */
 const YF_SYMBOLS = {
   'EURUSD=X':'EUR/USD',
@@ -583,39 +615,7 @@ function updateMarketStatus() {
     `;
     tbody.appendChild(row);
   });
-  /*────────────────────────   CSV DOWNLOAD   ───────────────────*/
-function genCSV(){
-  const rows=[['TYPE','Symbol/Pair','Dir/Qty','Entry','Current','P/L']];
-  fxPositions.forEach(p=>{
-    rows.push(['FX',p.pair,p.dir,p.entry,p.current,((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2)]);
-  });
-  stockPortfolio.forEach(s=>{
-    rows.push(['STOCK',s.sym,s.qty,s.entry,s.cur ?? s.currentPrice,s.pl]);
-  });
-  return 'data:text/csv;charset=utf-8,'+ rows.map(r=>r.join(',')).join('\n');
-}
-function injectCsvBtn() {
-  if (document.getElementById('dlCsvBtn')) return;
-
-  const btn = document.createElement('button');
-  btn.id = 'dlCsvBtn';
-  btn.textContent = 'Download Trades CSV';
-  btn.className = 'btn-primary';
-  btn.style.marginTop = '1rem';
-
-  btn.onclick = () => {
-    const uri = genCSV();
-    const a = document.createElement('a');
-    a.href = encodeURI(uri);
-    a.download = 'trades.csv';
-    a.click();
-  };
-  document.querySelector('.stock-sim').appendChild(btn);
-  // 👇 Append under trade history section
-  const historySection = document.getElementById('portGrid') || document.querySelector('.port-grid');
-  if (historySection) historySection.after(btn);
-}
-injectCsvBtn();
+ 
 
   // Update local time display
   const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
