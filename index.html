@@ -583,12 +583,7 @@ function updateMarketStatus() {
     `;
     tbody.appendChild(row);
   });
-
-  // Update local time display
-  const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
-  document.querySelector('.market-time').textContent = `Local Time: ${nowStr}`;
-}
-/*────────────────────────   CSV DOWNLOAD   ───────────────────*/
+  /*────────────────────────   CSV DOWNLOAD   ───────────────────*/
 function genCSV(){
   const rows=[['TYPE','Symbol/Pair','Dir/Qty','Entry','Current','P/L']];
   fxPositions.forEach(p=>{
@@ -621,6 +616,12 @@ function injectCsvBtn() {
   if (historySection) historySection.after(btn);
 }
 injectCsvBtn();
+
+  // Update local time display
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
+  document.querySelector('.market-time').textContent = `Local Time: ${nowStr}`;
+}
+
 updateMarketStatus();
 setInterval(updateMarketStatus, 60000); // update every minu
 </script>
