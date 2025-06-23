@@ -362,3 +362,36 @@ body.noscroll{overflow:hidden}
 .news-panel{margin-top:1.4rem}
 .news-panel ul{list-style:none;padding:0;font-size:.83rem}
 .news-panel li{margin:.25rem 0;color:var(--sub)}
+.forex-hours-chart .market-time {
+  font-size: 0.85rem;
+  color: var(--sub);
+  margin-bottom: 1rem;
+}
+
+.market-hours-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.market-hours-table th {
+  text-align: left;
+  padding: 0.6rem;
+  color: var(--sub);
+  border-bottom: 1px solid var(--border);
+}
+
+.market-hours-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--txt);
+}
+
+.market-hours-table tr.open {
+  background-color: rgba(0, 255, 128, 0.2); /* Light green */
+  font-weight: bold;
+}
+
+.market-hours-table tr:last-child td {
+  border-bottom: none;
+}
