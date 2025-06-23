@@ -136,7 +136,7 @@
 </div>
      
  <!-- 📈 STOCK PORTFOLIO SIMULATOR -->
-<section class="stock-sim">
+<!-- <section class="stock-sim">
   <h2>Stock Portfolio Simulator</h2>
   <form id="stockForm" class="stock-form">
     <label>
@@ -151,7 +151,7 @@
     <button type="submit">Add Stock</button>
   </form>
   <div id="stockTable" class="stock-table"></div>
-</section>
+</section> -->
     </section>
 
 <!--    3. PORTFOLIO SIM -->
@@ -324,38 +324,38 @@ function renderPositions() {
     portGrid.appendChild(card);
   });
 }
-const stockPortfolio = [];
+// const stockPortfolio = [];
 
-document.getElementById('stockForm').onsubmit = function (e) {
-  e.preventDefault();
-  const symbol = stockSymbol.value.toUpperCase();
-  const qty = +stockQty.value;
-  const entry = +stockEntry.value;
+// document.getElementById('stockForm').onsubmit = function (e) {
+//   e.preventDefault();
+//   const symbol = stockSymbol.value.toUpperCase();
+//   const qty = +stockQty.value;
+//   const entry = +stockEntry.value;
 
-  // Simulate current price (replace with API call if desired)
-  const currentPrice = entry + (Math.random() - 0.5) * 5; // Simulate ±$2.5 swing
-  const pl = ((currentPrice - entry) * qty).toFixed(2);
+//   // Simulate current price (replace with API call if desired)
+//   const currentPrice = entry + (Math.random() - 0.5) * 5; // Simulate ±$2.5 swing
+//   const pl = ((currentPrice - entry) * qty).toFixed(2);
 
-  stockPortfolio.push({ symbol, qty, entry, currentPrice, pl });
-  renderStockTable();
-};
+//   stockPortfolio.push({ symbol, qty, entry, currentPrice, pl });
+//   renderStockTable();
+// };
 
-function renderStockTable() {
-  const table = document.getElementById('stockTable');
-  table.innerHTML = '';
-  stockPortfolio.forEach(stock => {
-    const color = stock.pl >= 0 ? 'lime' : 'salmon';
-    table.innerHTML += `
-      <div class="stock-card">
-        <h4>${stock.symbol}</h4>
-        <div>Entry Price: ${stock.entry.toFixed(2)}</div>
-        <div>Current Price: ${stock.currentPrice.toFixed(2)}</div>
-        <div>Quantity: ${stock.qty}</div>
-        <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
-      </div>
-    `;
-  });
-}
+// function renderStockTable() {
+//   const table = document.getElementById('stockTable');
+//   table.innerHTML = '';
+//   stockPortfolio.forEach(stock => {
+//     const color = stock.pl >= 0 ? 'lime' : 'salmon';
+//     table.innerHTML += `
+//       <div class="stock-card">
+//         <h4>${stock.symbol}</h4>
+//         <div>Entry Price: ${stock.entry.toFixed(2)}</div>
+//         <div>Current Price: ${stock.currentPrice.toFixed(2)}</div>
+//         <div>Quantity: ${stock.qty}</div>
+//         <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
+//       </div>
+//     `;
+//   });
+// }
 /*****************  A.  CONTINUOUS LEARNING BADGE  *****************/
 const logKey='fx_trades_log';
 function saveTradeResult(p,livePL){
