@@ -395,3 +395,13 @@ body.noscroll{overflow:hidden}
 .market-hours-table tr:last-child td {
   border-bottom: none;
 }
+.highlight {
+  background: #3fc06b;
+  color: black;
+  font-weight: bold;
+}
+.market-time {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
