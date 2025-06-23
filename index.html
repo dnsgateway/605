@@ -580,6 +580,64 @@ function updateMarketStatus() {
 
 updateMarketStatus();
 setInterval(updateMarketStatus, 60000); // update every 60s
+  const marketSchedule = [
+  { name: "Sydney", open: "06:00", close: "14:00", tz: "Australia/Sydney" },
+  { name: "Tokyo", open: "08:00", close: "16:00", tz: "Asia/Tokyo" },
+  { name: "London", open: "15:00", close: "23:30", tz: "Europe/London" },
+  { name: "New York", open: "20:00", close: "05:00", tz: "America/New_York" }
+];
+
+function updateMarketStatus() {
+  const tbody = document.querySelector('.market-hours-table tbody');
+  tbody.innerHTML = ''; // Clear table first
+
+  const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const now = new Date();
+
+  marketSchedule.forEach(market => {
+    const openTime = new Date(new Date().toLocaleString("en-US", { timeZone: market.tz }));
+    const [openH, openM] = market.open.split(':').map(Number);
+    openTime.setHours(openH, openM, 0, 0);
+
+    const closeTime = new Date(new Date().toLocaleString("en-US", { timeZone: market.tz }));
+    const [closeH, closeM] = market.close.split(':').map(Number);
+    closeTime.setHours(closeH, closeM, 0, 0);
+
+    // Adjust for next day close (overnight sessions like NY)
+    if (closeTime < openTime) closeTime.setDate(closeTime.getDate() + 1);
+
+    const localNow = new Date(new Date().toLocaleString("en-US", { timeZone: market.tz }));
+
+    let status, countdown;
+    if (localNow >= openTime && localNow < closeTime) {
+      status = "Open";
+      const diffMs = closeTime - localNow;
+      countdown = `${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until close`;
+    } else {
+      status = "Closed";
+      const nextOpen = localNow > closeTime ? new Date(openTime.setDate(openTime.getDate() + 1)) : openTime;
+      const diffMs = nextOpen - localNow;
+      countdown = `${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until open`;
+    }
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${market.name}</td>
+      <td>${market.open}</td>
+      <td>${market.close}</td>
+      <td class="${status === 'Open' ? 'highlight' : ''}">${status}<br><small>${countdown}</small></td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Update local time display
+  const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
+  document.querySelector('.market-time').textContent = `Local Time: ${nowStr}`;
+}
+
+// Initial load and auto-refresh
+updateMarketStatus();
+setInterval(updateMarketStatus, 60000); // update every minute
 </script>
 </body>
 </html>
