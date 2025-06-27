@@ -194,7 +194,128 @@ body.blurred::after{
   border-radius:12px;
   background:#0d2235
 }
+/*-------------portfolio simulator-----------*/
+.sim-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+h1 .blue { color: #00caff; }
+h1 .green { color: #7af78e; }
 
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+section {
+  background: #0e1f2b;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 0 12px #012c40;
+}
+
+.trade-panel select,
+.trade-panel input {
+  width: 100%;
+  background: #071923;
+  color: #d0eaff;
+  border: 1px solid #1a2d3a;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.trade-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.trade-row > label, .trade-row > div {
+  flex: 1;
+}
+
+.ghost {
+  font-size: 0.85rem;
+  color: #d0f7d2;
+}
+.simulate-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: #1ed0ff;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #000;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.ai-panel {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.ai-panel .ai-callout {
+  font-size: 1.4rem;
+  margin: 0;
+}
+.ai-icon img {
+  width: 80px;
+  filter: drop-shadow(0 0 8px #00ffff88);
+}
+.ai-strategy {
+  flex: 1;
+}
+
+.fundamentals ul {
+  list-style: none;
+  padding: 0;
+}
+.fundamentals li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+.technicals .chart-img img,
+.history-chart .chart-img img {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.sma-label {
+  margin-top: 0.5rem;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.trade-history table {
+  width: 100%;
+  font-size: 0.95rem;
+  border-spacing: 0.5rem;
+}
+.trade-history th {
+  text-align: left;
+  padding-bottom: 0.5rem;
+}
+.green {
+  color: #7af78e;
+}
+.red {
+  color: #f96565;
+}
+.label {
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
 
 /* ──────────────── PORTFOLIO SIMULATOR ──────────────── */
 .port-header{
