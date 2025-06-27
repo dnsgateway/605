@@ -155,17 +155,80 @@
     </section>
 
 <!--    3. PORTFOLIO SIM -->
+ <section class="simulator">
+      <div class="tab-header">
+        <h2>Forex Simulator</h2>
+        <a href="#" class="tab-link">Options</a>
+      </div>
+      <div class="sim-inputs">
+        <label>Asset <select><option>EUR/USD</option></select></label>
+        <label>Direction <select><option>Buy</option><option>Sell</option></select></label>
+        <label>Time-frame <select><option>Daily</option></select></label>
+        <label>Entry Price <input type="text" value="1.07454" /></label>
+        <label>Lot Size <input type="text" value="10,000" /></label>
+        <label>Promit Price <span class="green">+1.088.00</span></label>
+        <label>Stop Loss <span class="green">+1.06330</span></label>
+        <label>Take Profit <span class="green">+1.09754</span></label>
+        <button class="simulate-btn">Simulate Trade</button>
+        <label>Current Price <span class="live-price">1.08543</span></label>
+        <label>Stop Loss <span class="green">+1.06754</span></label>
+      </div>
+    </section>
 
-    <section id="portfolio" class="page port-sim boxed">
+    <section class="ai-section">
+      <img src="images/ai-brain.png" alt="AI Brain" />
+    </section>
+
+    <section class="ai-insight">
+      <h3><span class="buy">BUY</span></h3>
+      <p>as the RSI is 34.7, suggesting the asset is oversold, while the price is oversold, while the price has crossed above SMA, indicating upward</p>
+    </section>
+
+    <section class="fundamentals">
+      <h4>Fundamentals</h4>
+      <ul>
+        <li>Market Cap <span>45.38B</span></li>
+        <li>Dividend Yield <span>2.34%</span></li>
+        <li>P/E Ratio <span>24.5</span></li>
+        <li>EPS (TTM) <span>2.78</span></li>
+      </ul>
+    </section>
+
+    <section class="technical">
+      <h4>Technical Indicators</h4>
+      <img src="images/chart.png" alt="Technical Chart" />
+      <p>SMA <span>34.7</span></p>
+    </section>
+
+    <section class="history">
+      <h4>Trade History</h4>
+      <table>
+        <thead>
+          <tr><th>Asset</th><th>Direction</th><th>Size</th><th>Result</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EUR/USD</td><td>Buy</td><td>10,000</td><td class="green">+276.80</td></tr>
+          <tr><td>AAPL</td><td>Sell</td><td>5</td><td class="red">-276.30</td></tr>
+          <tr><td>GBP/JPY</td><td>Buy</td><td>8,000</td><td class="green">+672.10</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="rsi-chart">
+      <h4>Trade History</h4>
+      <p>Price <span>14h</span></p>
+      <p>RSI <span>34.7</span></p>
+      <img src="images/price-chart.png" alt="RSI Price Chart"/>
+<!--     <section id="portfolio" class="page port-sim boxed">
       <div class="port-header">
         <h2>Forex Portfolio Simulator</h2>
         <label class="toggle">
           <input type="checkbox" id="aiPortToggle" />
           <span class="slider"></span><span class="label-text">AI Assist</span>
         </label>
-      </div>
+      </div> -->
 <!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
-<div class="ai-toolbar">
+<!-- <div class="ai-toolbar">
   <label>Time-frame
     <select id="tfSelect">
       <option value="D">Daily</option>
@@ -196,12 +259,12 @@
         <button type="submit">Add Position</button>
       </form>
 
-      <div id="portGrid" class="port-grid">
+      <div id="portGrid" class="port-grid"> -->
         <!--  👇  below the portfolio grid -->
-<h3 class="history-title">Trade History</h3>
+<!-- <h3 class="history-title">Trade History</h3>
 <ul id="historyList" class="history-list"></ul>
         <button id="downloadCSV" class="download-btn">Download CSV</button>
-      </div>
+      </div> -->
     </section>
     <!── 4. SETTINGS ──>
     <section id="settings" class="page settings">
