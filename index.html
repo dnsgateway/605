@@ -135,8 +135,35 @@
   </table>
 </div>
      
- <!-- 📈 Updated  PORTFOLIO SIMULATOR -->
+ <!-- 📈 UPDATED WATCHLIST -->
 
+      <div class="watchlist">
+    <h2>Watchlist Simulator</h2>
+    <div>
+      <select id="asset">
+        <option value="EUR/USD">EUR/USD</option>
+        <option value="AAPL">AAPL</option>
+        <option value="SPY">SPY</option>
+        <option value="GBP/JPY">GBP/JPY</option>
+      </select>
+      <input type="number" id="entryPrice" placeholder="Entry Price" step="0.0001">
+      <input type="number" id="quantity" placeholder="Quantity">
+      <button onclick="addTrade()">Add Trade</button>
+    </div>
+    <table id="tradeTable">
+      <thead>
+        <tr>
+          <th>Asset</th>
+          <th>Entry Price</th>
+          <th>Current Price</th>
+          <th>Quantity</th>
+          <th>Total Value</th>
+          <th>P&L</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+      </div>
     </section>
 
 <!--    3. PORTFOLIO SIM -->
@@ -198,6 +225,8 @@
   <span class="slider"></span>
   <span class="label-text">Neon Theme</span>
 </label>
+    </section>
+  
   </main>
 
   <!── bottom bar (mobile) ──>
