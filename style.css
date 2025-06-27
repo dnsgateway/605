@@ -221,61 +221,7 @@ body.blurred::after{
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
 }
 /* START UPDATED wWATCHLIST- */
-   .watchlist {
-      max-width: 1000px;
-      margin: auto;
-      background-color: #11192b;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #00d0ff50;
-    }
 
-    .watchlist table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    .watchlist th, .watchlist td {
-      padding: 12px;
-      border-bottom: 1px solid #233044;
-      text-align: center;
-    }
-
-    .watchlist input, .watchlist select {
-      padding: 6px 10px;
-      font-size: 0.9rem;
-      background-color: #1c2737;
-      color: #cfeeff;
-      border: 1px solid #345075;
-      border-radius: 6px;
-    }
-
-    .watchlist button {
-      background-color: #00d0ff;
-      color: #001822;
-      padding: 8px 16px;
-      margin-top: 10px;
-      font-weight: bold;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .watchlist button:hover {
-      background-color: #00b0d6;
-    }
-
-    .profit {
-      color: #00ff9e;
-    }
-
-    .loss {
-      color: #ff6f61;
-    }
-
-    
-     
 /*END UPDATED  WATCCHLIST */
 .port-card{
   background:var(--panel);
