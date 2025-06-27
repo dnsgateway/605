@@ -195,7 +195,7 @@ body.blurred::after{
   background:#0d2235
 }
 /* ──────────────── PORTFOLIO SIMULATOR ──────────────── */
-/* .port-header{
+.port-header{
   display:flex;justify-content:space-between;align-items:center
 }
 .subline{color:var(--sub);font-size:.9rem;margin:.3rem 0 1.1rem}
@@ -275,123 +275,8 @@ body.blurred::after{
 .port-card, .stock-card {
   position: relative;
 }
- */
-.simulator {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  align-items: start;
-}
 
-.sim-box, .ai-output, .fundamentals, .technical, .trade-history, .trade-graph {
-  background: #111829;
-  border: 1px solid #1d2d44;
-  padding: 1rem;
-  border-radius: 12px;
-}
 
-.sim-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.sim-header a {
-  color: #9fc4ff;
-  text-decoration: none;
-}
-
-.sim-form {
-  display: grid;
-  gap: 0.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  margin-bottom: 1rem;
-}
-
-.sim-form label {
-  font-size: 0.85rem;
-}
-
-.sim-form input, .sim-form select {
-  width: 100%;
-  background: #091324;
-  color: #fff;
-  padding: 0.4rem;
-  border: none;
-  border-radius: 6px;
-}
-
-.simulate-btn {
-  width: 100%;
-  background: #00c6ff;
-  color: #001323;
-  font-weight: bold;
-  padding: 0.6rem;
-  border: none;
-  border-radius: 8px;
-  margin-top: 0.8rem;
-}
-
-.price-bar, .price-footer {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  margin-top: 0.6rem;
-}
-
-.price-bar b, .price-footer b {
-  color: #00ff9a;
-}
-
-.ai-icon img {
-  width: 100%;
-  object-fit: contain;
-}
-
-.ai-output h3 {
-  color: #00c6ff;
-}
-
-.ai-output p {
-  font-size: 0.9rem;
-  color: #cfd9e0;
-}
-
-.fundamentals ul {
-  list-style: none;
-  padding: 0;
-}
-
-.fundamentals li {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.4rem;
-}
-
-.technical img {
-  width: 100%;
-  margin: 0.6rem 0;
-  border-radius: 8px;
-}
-
-.trade-history table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.6rem;
-}
-
-.trade-history th, .trade-history td {
-  padding: 0.4rem;
-  text-align: left;
-}
-
-.trade-history .pos { color: #00ff99; }
-.trade-history .neg { color: #ff7676; }
-
-.trade-graph img {
-  width: 100%;
-  margin-top: 0.6rem;
-  border-radius: 8px;
 .tv-summary-widget {
   margin-top: 1rem;
   background: var(--panel);
