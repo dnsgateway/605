@@ -136,106 +136,21 @@
 </div>
      
  <!-- 📈 Updated  PORTFOLIO SIMULATOR -->
-  <div class="wrapper">
-    <!-- LEFT PANEL -->
-    <div class="panel">
-      <div class="tabs">
-        <h2 id="forexTab" class="tab-link">Forex Simulator</h2>
-        <a id="optionsTab" class="tab-link">Options</a>
-      </div>
 
-      <!-- FOREX TAB -->
-      <div class="tab-content active" id="forexContent">
-        <form id="forexForm">
-          <div class="form-grid">
-            <label>Asset
-              <select id="fPair">
-                <option>EUR/USD</option><option>USD/JPY</option>
-              </select>
-            </label>
-            <label>Direction
-              <select id="fDirection">
-                <option>Buy</option><option>Sell</option>
-              </select>
-            </label>
-            <label>Time-frame
-              <select>
-                <option>Daily</option><option>1H</option>
-              </select>
-            </label>
-            <label>Entry Price <input id="fEntry" type="number" step="0.0001" /></label>
-            <label>Lot Size <input id="fSize" type="number" /></label>
-            <label>Current Price <input id="fCurrent" type="number" step="0.0001" /></label>
-          </div>
-          <button type="submit">Simulate Trade</button>
-        </form>
-        <h2>Trade History</h2>
-        <table class="trade-table" id="forexTable">
-          <thead><tr><th>Asset</th><th>Dir</th><th>Size</th><th>Result</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <!-- OPTIONS TAB -->
-      <div class="tab-content" id="optionsContent">
-        <form id="optForm">
-          <div class="form-grid">
-            <label>Asset
-              <select id="oAsset"><option>AAPL</option><option>TSLA</option></select>
-            </label>
-            <label>Call/Put
-              <select id="oType"><option>Call</option><option>Put</option></select>
-            </label>
-            <label>Strike <input id="oStrike" type="number" /></label>
-            <label>Premium <input id="oPremium" type="number" /></label>
-            <label>Shares <input id="oQty" type="number" /></label>
-            <label>Stock Price <input id="oCurrent" type="number" /></label>
-          </div>
-          <button type="submit">Simulate Option</button>
-        </form>
-        <h2>Trade History</h2>
-        <table class="trade-table" id="optionsTable">
-          <thead><tr><th>Asset</th><th>Type</th><th>Qty</th><th>Result</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- RIGHT PANEL -->
-    <div class="panel">
-      <div class="ai-panel">
-        <p><span class="highlight">BUY</span> — RSI is 34.7, suggesting oversold, price above SMA, indicating momentum.</p>
-      </div>
-
-      <div class="ai-section">
-        <div class="ai-panel fundamentals">
-          <h2>Fundamentals</h2>
-          <p>Market Cap: <span class="highlight">45.38B</span></p>
-          <p>Dividend Yield: <span class="highlight">2.34%</span></p>
-          <p>P/E Ratio: <span class="highlight">24.5</span></p>
-          <p>EPS (TTM): <span class="highlight">2.78</span></p>
-        </div>
-        <div class="ai-panel tech-indicators">
-          <h2>Technical Indicators</h2>
-          <p>SMA: <span class="highlight">34.7</span></p>
-          <img class="chart-img" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Candlestick_chart_scheme.svg" alt="Chart">
-        </div>
-      </div>
-    </div
     </section>
 
 <!--    3. PORTFOLIO SIM -->
  
-<!--     <section id="portfolio" class="page port-sim boxed">
+    <section id="portfolio" class="page port-sim boxed">
       <div class="port-header">
         <h2>Forex Portfolio Simulator</h2>
         <label class="toggle">
           <input type="checkbox" id="aiPortToggle" />
           <span class="slider"></span><span class="label-text">AI Assist</span>
         </label>
-      </div> -->
+      </div>
 <!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
-<!-- <div class="ai-toolbar">
+<div class="ai-toolbar">
   <label>Time-frame
     <select id="tfSelect">
       <option value="D">Daily</option>
@@ -265,26 +180,24 @@
         <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
         <button type="submit">Add Position</button>
       </form>
-
-      <div id="portGrid" class="port-grid"> -->
+      <div id="portGrid" class="port-grid">
         <!--  👇  below the portfolio grid -->
-<!-- <h3 class="history-title">Trade History</h3>
+<h3 class="history-title">Trade History</h3>
 <ul id="historyList" class="history-list"></ul>
         <button id="downloadCSV" class="download-btn">Download CSV</button>
       </div>
     </section>
-    <!── 4. SETTINGS ──>
+<!--     <!── 4. SETTINGS ──> -->
     <section id="settings" class="page settings">
       <h2>Settings</h2>
       <label class="toggle"><input type="checkbox" id="matrixToggle"><span class="slider"></span><span class="label-text">Matrix Theme</span></label>
       <label class="toggle"><input type="checkbox" id="blurToggle"><span class="slider"></span><span class="label-text">Blur Screen</span></label>
       <!-- B) extra neon-theme toggle (under Settings section) --> 
-<!-- <label class="toggle">
+<label class="toggle">
   <input type="checkbox" id="neonToggle">
   <span class="slider"></span>
   <span class="label-text">Neon Theme</span>
-</label> -->
-  
+</label>
   </main>
 
   <!── bottom bar (mobile) ──>
