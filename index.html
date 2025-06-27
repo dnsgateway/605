@@ -137,47 +137,20 @@
      
  <!-- 📈 UPDATED WATCHLIST -->
 
-      <div class="watchlist">
-    <h2>Watchlist Simulator</h2>
-    <div>
-      <select id="asset">
-        <option value="EUR/USD">EUR/USD</option>
-        <option value="AAPL">AAPL</option>
-        <option value="SPY">SPY</option>
-        <option value="GBP/JPY">GBP/JPY</option>
-      </select>
-      <input type="number" id="entryPrice" placeholder="Entry Price" step="0.0001">
-      <input type="number" id="quantity" placeholder="Quantity">
-      <button onclick="addTrade()">Add Trade</button>
-    </div>
-    <table id="tradeTable">
-      <thead>
-        <tr>
-          <th>Asset</th>
-          <th>Entry Price</th>
-          <th>Current Price</th>
-          <th>Quantity</th>
-          <th>Total Value</th>
-          <th>P&L</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-      </div>
     
 
 <!--    3. PORTFOLIO SIM -->
  
-<!--     <section id="portfolio" class="page port-sim boxed">
+   <section id="portfolio" class="page port-sim boxed">
       <div class="port-header">
         <h2>Forex Portfolio Simulator</h2>
         <label class="toggle">
           <input type="checkbox" id="aiPortToggle" />
           <span class="slider"></span><span class="label-text">AI Assist</span>
         </label>
-      </div> -->
+      </div> 
 <!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
-<!-- <div class="ai-toolbar">
+ <div class="ai-toolbar">
   <label>Time-frame
     <select id="tfSelect">
       <option value="D">Daily</option>
@@ -205,13 +178,13 @@
         <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
         <button type="submit">Add Position</button>
       </form>
-      <div id="portGrid" class="port-grid"> -->
+      <div id="portGrid" class="port-grid"> 
         <!--  👇  below the portfolio grid -->
-<!-- <h3 class="history-title">Trade History</h3>
+<h3 class="history-title">Trade History</h3>
 <ul id="historyList" class="history-list"></ul>
         <button id="downloadCSV" class="download-btn">Download CSV</button>
       </div>
-    </section> -->
+    </section> 
 <!--     <!── 4. SETTINGS ──> -->
     <section id="settings" class="page settings">
       <h2>Settings</h2>
