@@ -220,51 +220,102 @@ body.blurred::after{
   display:grid;gap:1.2rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
 }
-/* .stock-sim {
-  background: var(--panel);
-  padding: 1rem;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  margin-top: 1rem;
-}
-.stock-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.2rem;
-}
-.stock-form input {
-  padding: .45rem;
-  background: #0d2235;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-}
-.stock-form button {
-  background: var(--accent);
-  border: none;
-  padding: .55rem;
-  border-radius: 6px;
-  color: var(--bg);
-  font-weight: bold;
-  cursor: pointer;
-}
-.stock-table {
-  display: grid;
-  gap: 1rem;
-}
-.stock-card {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 10px;
-  padding: 1rem;
-}
-.stock-card h4 {
-  margin: 0 0 .5rem;
-}
-.stock-card .pl {
-  font-weight: bold;
-} */
+/* .updated-sim */
+     .wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      padding: 0 2rem 2rem;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tabs a {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-left: 1rem;
+      cursor: pointer;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 1.2rem 0;
+    }
+    label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: none;
+      border-radius: 6px;
+      background: #182a45;
+      color: white;
+    }
+    button {
+      grid-column: span 2;
+      padding: 0.6rem;
+      background: var(--accent);
+      color: #001122;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .trade-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.2rem;
+    }
+    .trade-table th, .trade-table td {
+      padding: 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .profit { color: var(--profit); }
+    .loss { color: var(--loss); }
+    .ai-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .ai-panel {
+      background: #101c2c;
+      border: 1px solid #1e2d35;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .highlight {
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .fundamentals p, .tech-indicators p {
+      margin: 0.4rem 0;
+      font-size: 0.9rem;
+    }
+    .chart-img {
+      width: 100%;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+/*end updated sim*/
 .port-card{
   background:var(--panel);
   border:1px solid var(--border);
