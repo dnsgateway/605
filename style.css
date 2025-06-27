@@ -195,47 +195,9 @@ body.blurred::after{
   background:#0d2235
 }
 /* ──────────────── PORTFOLIO SIMULATOR ──────────────── */
-.simulator, .ai-section, .ai-insight, .fundamentals, .technical, .history, .rsi-chart {
-  background: #0e2b45;
-  padding: 1rem;
-  border-radius: 12px;
-}
-.tab-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.tab-header a {
-  color: #88aaff;
-  text-decoration: none;
-}
-.sim-inputs label, .sim-inputs span {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.simulate-btn {
-  margin-top: 1rem;
-  background: #00eaff;
-  color: #001323;
-  padding: 0.6rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.green { color: #00ff88; }
-.red { color: #ff6666; }
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th, td {
-  padding: 0.6rem;
-  text-align: left;
-}
-.buy { color: #00ffff; }
 
-/* .port-header{
+
+.port-header{
   display:flex;justify-content:space-between;align-items:center
 }
 .subline{color:var(--sub);font-size:.9rem;margin:.3rem 0 1.1rem}
@@ -257,7 +219,7 @@ th, td {
 .port-grid{
   display:grid;gap:1.2rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
-} */
+}
 /* .stock-sim {
   background: var(--panel);
   padding: 1rem;
