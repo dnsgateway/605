@@ -218,7 +218,7 @@ body.blurred::after{
   display:grid;gap:1.2rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
 }
-.stock-sim {
+/* .stock-sim {
   background: var(--panel);
   padding: 1rem;
   border-radius: 12px;
@@ -262,7 +262,7 @@ body.blurred::after{
 }
 .stock-card .pl {
   font-weight: bold;
-}
+} */
 .port-card{
   background:var(--panel);
   border:1px solid var(--border);
