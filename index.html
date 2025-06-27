@@ -155,51 +155,78 @@
     </section>
 
 <!--    3. PORTFOLIO SIM -->
-    <section id="portfolio" class="page port-sim boxed">
-      <div class="port-header">
-        <h2>Forex Portfolio Simulator</h2>
-        <label class="toggle">
-          <input type="checkbox" id="aiPortToggle" />
-          <span class="slider"></span><span class="label-text">AI Assist</span>
-        </label>
+       <h1><span>Forex</span> and <span>Options</span> Portfolio Simulator</h1>
+    <section class="simulator">
+      <div class="sim-box">
+        <div class="sim-header">
+          <h2>Forex Simulator</h2>
+          <a href="#">Options</a>
+        </div>
+        <form class="sim-form">
+          <label>Asset
+            <select><option>EUR/USD</option></select>
+          </label>
+          <label>Direction
+            <select><option>Buy</option><option>Sell</option></select>
+          </label>
+          <label>Time-frame
+            <select><option>Daily</option></select>
+          </label>
+          <label>Entry Price <input type="text" value="1.07454"/></label>
+          <label>Lot Size <input type="text" value="10,000"/></label>
+        </form>
+        <div class="price-bar">
+          <span>Promit Price<br><b>+1.088.00</b></span>
+          <span>Stop Loss<br><b>+1.06330</b></span>
+          <span>Take Profit<br><b>+1.09754</b></span>
+        </div>
+        <button class="simulate-btn">Simulate Trade</button>
+        <div class="price-footer">
+          <span>Current Price<br><b>1.08543</b></span>
+          <span>Stop Loss<br><b>+1.06754</b></span>
+        </div>
       </div>
-<!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
-<div class="ai-toolbar">
-  <label>Time-frame
-    <select id="tfSelect">
-      <option value="D">Daily</option>
-      <option value="4H">4-Hour</option>
-      <option value="1H">1-Hour</option>
-    </select>
-  </label>
 
-  <label>Account Risk %
-    <input id="acctRisk" type="number" step="0.1" value="1.0" />
-  </label>
+      <div class="ai-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="AI Brain" />
+      </div>
 
-  <span id="aiStats" class="ai-badge" title="AI win-rate">—</span>
-</div>
-      <p class="subline">Enter position details and let AI suggest a strategy.</p>
+      <div class="ai-output">
+        <h3>BUY</h3>
+        <p>as the RSI is 34.7, suggesting the asset is oversold, while the price is oversold, while the price has crossed above SMA, indicating upward</p>
+      </div>
 
-      <form id="portForm" class="port-form">
-        <label>Pair
-          <select id="pPair">
-            <option>EUR/USD</option><option>USD/JPY</option>
-            <option>GBP/USD</option><option>USD/CAD</option>
-            <option>AUD/USD</option>
-          </select>
-        </label>
-        <label>Entry Price <input type="number" id="pEntry" step="0.00001" required></label>
-        <label>Current Price <input type="number" id="pCurrent" step="0.00001" required></label>
-        <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
-        <button type="submit">Add Position</button>
-      </form>
+      <div class="fundamentals">
+        <h3>Fundamentals</h3>
+        <ul>
+          <li>Market Cap <b>45.38B</b></li>
+          <li>Dividend Yield <b>2.34%</b></li>
+          <li>P/E Ratio <b>24.5</b></li>
+          <li>EPS (TTM) <b>2.78</b></li>
+        </ul>
+      </div>
 
-      <div id="portGrid" class="port-grid">
-        <!--  👇  below the portfolio grid -->
-<h3 class="history-title">Trade History</h3>
-<ul id="historyList" class="history-list"></ul>
-        <button id="downloadCSV" class="download-btn">Download CSV</button>
+      <div class="technical">
+        <h3>Technical Indicators</h3>
+        <img src="https://www.tradingview.com/x/QDlYyW9Z/" alt="SMA Chart" />
+        <p>SMA <b>34.7</b></p>
+      </div>
+
+      <div class="trade-history">
+        <h3>Trade History</h3>
+        <table>
+          <tr><th>Asset</th><th>Direction</th><th>Size</th><th>Result</th></tr>
+          <tr><td>EUR/USD</td><td>Buy</td><td>10,000</td><td class="pos">+276.80</td></tr>
+          <tr><td>AAPL</td><td>Sell</td><td>5</td><td class="neg">-276.30</td></tr>
+          <tr><td>GBP/JPY</td><td>Buy</td><td>8,000</td><td class="pos">+672.10</td></tr>
+        </table>
+      </div>
+
+      <div class="trade-graph">
+        <h3>Trade History</h3>
+        <p>Price — 14h</p>
+        <p>RSI — 34.7</p>
+        <img src="https://i.imgur.com/F8v3a95.png" alt="RSI Chart" />
       </div>
     </section>
     <!── 4. SETTINGS ──>
