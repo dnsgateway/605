@@ -254,33 +254,7 @@ body.blurred::after{
       border: none;
       border-radius: 6px;
       cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      text-align: center;
-      padding: 10px;
-      border-bottom: 1px solid #2c3e50;
-    }
-
-    th {
-      background-color: #1f2e47;
-      color: #8fd3f4;
-    }
-
-    td button {
-      background-color: crimson;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    
+    }  
 /*END UPDATED  WATCCHLIST */
 .port-card{
   background:var(--panel);
