@@ -137,7 +137,33 @@
      
  <!-- 📈 UPDATED WATCHLIST -->
 
-    
+    <h1>Trading Watchlist Simulator</h1>
+
+  <div class="watchlist-container">
+    <form class="watchlist-form" id="tradeForm">
+      <input type="text" id="symbol" placeholder="Symbol (e.g., EUR/USD or AAPL)" required>
+      <input type="number" id="entryPrice" placeholder="Entry Price" required step="0.0001">
+      <input type="number" id="quantity" placeholder="Quantity" required>
+      <button type="submit">Add Trade</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Entry Price</th>
+          <th>Quantity</th>
+          <th>Trade Value</th>
+          <th>Current Price</th>
+          <th>Unrealized P&L</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="watchlistBody">
+        <!-- Trade rows appear here -->
+      </tbody>
+    </table>
+  </div>
 
 <!--    3. PORTFOLIO SIM -->
  
