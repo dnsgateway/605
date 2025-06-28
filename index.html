@@ -134,7 +134,31 @@
     </tbody>
   </table>
 </div>
-     
+    <!-- ─────── Watchlist Module ─────── -->
+<section id="watchlist" class="page port-sim boxed">
+  <div class="port-header">
+    <h2>Paper Trade Watchlist</h2>
+    <p class="subline">Add any asset to monitor live paper trades</p>
+  </div>
+
+  <form id="watchlistForm" class="port-form">
+    <label>
+      Symbol (e.g. AAPL, EURUSD=X)
+      <input type="text" id="wlSymbol" placeholder="e.g. TSLA or EURUSD=X" required />
+    </label>
+    <label>
+      Entry Price
+      <input type="number" id="wlEntry" step="0.0001" required />
+    </label>
+    <label>
+      Quantity
+      <input type="number" id="wlQty" required />
+    </label>
+    <button type="submit">Add Trade</button>
+  </form>
+
+  <div id="watchlistTable" class="port-grid"></div>
+</section> 
  <!-- 📈 STOCK PORTFOLIO SIMULATOR -->
 <!-- <section class="stock-sim">
   <h2>Stock Portfolio Simulator</h2>
@@ -152,7 +176,7 @@
   </form>
   <div id="stockTable" class="stock-table"></div>
 </section> -->
-    </section>
+  
 
 <!--    3. PORTFOLIO SIM -->
     <section id="portfolio" class="page port-sim boxed">
@@ -324,6 +348,59 @@ function renderPositions() {
     `;
     portGrid.appendChild(card);
   });
+}
+  const watchlist = [];
+
+document.getElementById('watchlistForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const symbol = wlSymbol.value.toUpperCase();
+  const entry = parseFloat(wlEntry.value);
+  const qty = parseInt(wlQty.value);
+
+  const current = await fetchLivePrice(symbol);
+  if (isNaN(current)) {
+    alert("Failed to fetch live price for " + symbol);
+    return;
+  }
+
+  const pl = ((current - entry) * qty).toFixed(2);
+  watchlist.push({ symbol, entry, qty, current, pl });
+  renderWatchlist();
+};
+
+async function fetchLivePrice(symbol) {
+  try {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1d&interval=1m`;
+    const res = await fetch(url).then(r => r.json());
+    const close = res.chart.result[0].indicators.quote[0].close.filter(n => n);
+    return close.at(-1);
+  } catch {
+    return NaN;
+  }
+}
+
+function renderWatchlist() {
+  const table = document.getElementById('watchlistTable');
+  table.innerHTML = '';
+  watchlist.forEach((item, index) => {
+    const color = item.pl >= 0 ? 'lime' : 'var(--down)';
+    const card = document.createElement('div');
+    card.className = 'port-card';
+    card.innerHTML = `
+      <h4>${item.symbol}</h4>
+      <div>Entry Price: <span>${item.entry.toFixed(4)}</span></div>
+      <div>Current Price: <span>${item.current.toFixed(4)}</span></div>
+      <div>Quantity: <span>${item.qty}</span></div>
+      <div class="pl">P/L: <span style="color:${color}">${item.pl}</span></div>
+      <button onclick="removeWatchlistItem(${index})" style="margin-top:10px;background:#333;color:#fff;border:1px solid var(--accent);padding:6px 10px;border-radius:5px;">Remove</button>
+    `;
+    table.appendChild(card);
+  });
+}
+
+function removeWatchlistItem(index) {
+  watchlist.splice(index, 1);
+  renderWatchlist();
 }
 // const stockPortfolio = [];
 
