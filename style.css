@@ -417,3 +417,25 @@ body.noscroll{overflow:hidden}
   background: #0f0;
   color: #000;
 }
+#watchlist .port-form input,
+#watchlist .port-form button {
+  background: #0d2235;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+#watchlist .port-form button {
+  background: var(--accent);
+  color: #001323;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#watchlist .port-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem;
+}
