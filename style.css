@@ -1,4 +1,3 @@
-
 /************************************
   Forex Simulator – COMPLETE STYLES
   (2025-06 update)
@@ -196,7 +195,6 @@ body.blurred::after{
 }
 /* ──────────────── PORTFOLIO SIMULATOR ──────────────── */
 
-
 .port-header{
   display:flex;justify-content:space-between;align-items:center
 }
@@ -220,42 +218,51 @@ body.blurred::after{
   display:grid;gap:1.2rem;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr))
 }
-/* START UPDATED WATCHLIST- */
-  .watchlist-container {
-      max-width: 1000px;
-      margin: auto;
-      background: #1b263b;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px #000;
-    }
-
-    .watchlist-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .watchlist-form input, .watchlist-form select {
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      flex: 1;
-      min-width: 120px;
-      background: #415a77;
-      color: white;
-    }
-
-    .watchlist-form button {
-      background-color: #33ccff;
-      color: black;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }  
-/*END UPDATED  WATCCHLIST */
+/* .stock-sim {
+  background: var(--panel);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+.stock-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.stock-form input {
+  padding: .45rem;
+  background: #0d2235;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+.stock-form button {
+  background: var(--accent);
+  border: none;
+  padding: .55rem;
+  border-radius: 6px;
+  color: var(--bg);
+  font-weight: bold;
+  cursor: pointer;
+}
+.stock-table {
+  display: grid;
+  gap: 1rem;
+}
+.stock-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 1rem;
+}
+.stock-card h4 {
+  margin: 0 0 .5rem;
+}
+.stock-card .pl {
+  font-weight: bold;
+} */
 .port-card{
   background:var(--panel);
   border:1px solid var(--border);
@@ -268,7 +275,6 @@ body.blurred::after{
 .port-card, .stock-card {
   position: relative;
 }
-
 
 .tv-summary-widget {
   margin-top: 1rem;
