@@ -135,48 +135,37 @@
   </table>
 </div>
      
- <!-- 📈 UPDATED WATCHLIST -->
-
- 
-  <div class="watchlist-container">
-       <h1>Trading Watchlist Simulator</h1>
-    <form class="watchlist-form" id="tradeForm">
-      <input type="text" id="symbol" placeholder="Symbol (e.g., EUR/USD or AAPL)" required>
-      <input type="number" id="entryPrice" placeholder="Entry Price" required step="0.0001">
-      <input type="number" id="quantity" placeholder="Quantity" required>
-      <button type="submit">Add Trade</button>
-    </form>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Entry Price</th>
-          <th>Quantity</th>
-          <th>Trade Value</th>
-          <th>Current Price</th>
-          <th>Unrealized P&L</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="watchlistBody">
-        <!-- Trade rows appear here -->
-      </tbody>
-    </table>
-  </div>
+ <!-- 📈 STOCK PORTFOLIO SIMULATOR -->
+<!-- <section class="stock-sim">
+  <h2>Stock Portfolio Simulator</h2>
+  <form id="stockForm" class="stock-form">
+    <label>
+      Ticker <input type="text" id="stockSymbol" placeholder="e.g. AAPL" required />
+    </label>
+    <label>
+      Quantity <input type="number" id="stockQty" required />
+    </label>
+    <label>
+      Entry Price <input type="number" id="stockEntry" step="0.01" required />
+    </label>
+    <button type="submit">Add Stock</button>
+  </form>
+  <div id="stockTable" class="stock-table"></div>
+</section> -->
     </section>
+
 <!--    3. PORTFOLIO SIM -->
  
-   <section id="portfolio" class="page port-sim boxed">
+    <section id="portfolio" class="page port-sim boxed">
       <div class="port-header">
         <h2>Forex Portfolio Simulator</h2>
         <label class="toggle">
           <input type="checkbox" id="aiPortToggle" />
           <span class="slider"></span><span class="label-text">AI Assist</span>
         </label>
-      </div> 
+      </div>
 <!--  👇  insert inside <section id="portfolio" …> *above* the form  -->
- <div class="ai-toolbar">
+<div class="ai-toolbar">
   <label>Time-frame
     <select id="tfSelect">
       <option value="D">Daily</option>
@@ -184,9 +173,11 @@
       <option value="1H">1-Hour</option>
     </select>
   </label>
+
   <label>Account Risk %
     <input id="acctRisk" type="number" step="0.1" value="1.0" />
   </label>
+
   <span id="aiStats" class="ai-badge" title="AI win-rate">—</span>
 </div>
       <p class="subline">Enter position details and let AI suggest a strategy.</p>
@@ -204,26 +195,26 @@
         <label>Position Size <input type="number" id="pSize" placeholder="25 000" required></label>
         <button type="submit">Add Position</button>
       </form>
-      <div id="portGrid" class="port-grid"> 
+
+      <div id="portGrid" class="port-grid">
         <!--  👇  below the portfolio grid -->
 <h3 class="history-title">Trade History</h3>
 <ul id="historyList" class="history-list"></ul>
         <button id="downloadCSV" class="download-btn">Download CSV</button>
       </div>
-    </section> 
-<!--     <!── 4. SETTINGS ──> -->
+    </section>
+    <!── 4. SETTINGS ──>
     <section id="settings" class="page settings">
       <h2>Settings</h2>
       <label class="toggle"><input type="checkbox" id="matrixToggle"><span class="slider"></span><span class="label-text">Matrix Theme</span></label>
       <label class="toggle"><input type="checkbox" id="blurToggle"><span class="slider"></span><span class="label-text">Blur Screen</span></label>
-      <!-- B) extra neon-theme toggle (under Settings section) --> 
+      <!-- B) extra neon-theme toggle (under Settings section) -->
 <label class="toggle">
   <input type="checkbox" id="neonToggle">
   <span class="slider"></span>
   <span class="label-text">Neon Theme</span>
 </label>
     </section>
-  
   </main>
 
   <!── bottom bar (mobile) ──>
@@ -305,7 +296,7 @@ portForm.onsubmit = e => {
     rr = (Math.abs((tgt - entry) / (entry - stop))).toFixed(2);
     conf = rsiVal > 70 || rsiVal < 30 ? 'High' : 'Medium';
     const pattern = detectPattern(bars);
-    if (pattern) note = `Detected: ${pattern}`;
+    if (pattern) note = Detected: ${pattern};
   }
 
   positions.push({ pair, entry, current, size, dir, pl, stop, tgt, rsi, sma, rr, conf, note });
@@ -317,21 +308,21 @@ function renderPositions() {
   positions.forEach(p => {
     const card = document.createElement('div');
     card.className = 'port-card';
-    card.innerHTML = `
+    card.innerHTML = 
       <h4>${p.pair}</h4>
       <div>Entry: <span>${p.entry.toFixed(5)}</span></div>
       <div class="current">Current: <span>${p.current.toFixed(5)}</span></div>
       <div>Position: <span>${p.dir}</span></div>
       <div>Size: <span>${p.size.toLocaleString()}</span></div>
       <div class="pl">P/L <span style="color:${p.pl >= 0 ? 'lime' : 'salmon'}">${p.pl}</span></div>
-      ${p.stop !== '--' ? `<div>Stop Loss: <span>${p.stop}</span></div>` : ''}
-      ${p.tgt !== '--' ? `<div>Target: <span>${p.tgt}</span></div>` : ''}
-      ${p.rsi !== '--' ? `<div>RSI: <span>${p.rsi}</span></div>` : ''}
-      ${p.sma !== '--' ? `<div>SMA-20: <span>${p.sma}</span></div>` : ''}
-      ${p.rr !== '--' ? `<div>Risk/Reward: <span>${p.rr}</span></div>` : ''}
-      ${p.conf !== '--' ? `<div>Confidence: <span>${p.conf}</span></div>` : ''}
-      ${p.note ? `<div class="ai">${p.note}</div>` : ''}
-    `;
+      ${p.stop !== '--' ? <div>Stop Loss: <span>${p.stop}</span></div> : ''}
+      ${p.tgt !== '--' ? <div>Target: <span>${p.tgt}</span></div> : ''}
+      ${p.rsi !== '--' ? <div>RSI: <span>${p.rsi}</span></div> : ''}
+      ${p.sma !== '--' ? <div>SMA-20: <span>${p.sma}</span></div> : ''}
+      ${p.rr !== '--' ? <div>Risk/Reward: <span>${p.rr}</span></div> : ''}
+      ${p.conf !== '--' ? <div>Confidence: <span>${p.conf}</span></div> : ''}
+      ${p.note ? <div class="ai">${p.note}</div> : ''}
+    ;
     portGrid.appendChild(card);
   });
 }
@@ -356,7 +347,7 @@ function renderPositions() {
 //   table.innerHTML = '';
 //   stockPortfolio.forEach(stock => {
 //     const color = stock.pl >= 0 ? 'lime' : 'salmon';
-//     table.innerHTML += `
+//     table.innerHTML += 
 //       <div class="stock-card">
 //         <h4>${stock.symbol}</h4>
 //         <div>Entry Price: ${stock.entry.toFixed(2)}</div>
@@ -364,7 +355,7 @@ function renderPositions() {
 //         <div>Quantity: ${stock.qty}</div>
 //         <div class="pl" style="color:${color}">P/L: ${stock.pl}</div>
 //       </div>
-//     `;
+//     ;
 //   });
 // }
 
@@ -378,7 +369,7 @@ function saveTradeResult(p,livePL){
 function updateWinRate(){
   const log = JSON.parse(localStorage.getItem(logKey)||'[]');
   const rate = log.length? (100*log.filter(t=>t.win).length/log.length).toFixed(0)+'%' : '—';
-  aiStats.textContent = `AI Win-rate ${rate}`;
+  aiStats.textContent = AI Win-rate ${rate};
 }
 updateWinRate();
 
@@ -390,7 +381,7 @@ async function fetchCalendar(){
     const items=[...new window.DOMParser().parseFromString(xml,'text/xml').querySelectorAll('item')]
       .slice(0,8)  // first few
       .map(it=>it.querySelector('title').textContent);
-    newsUL.innerHTML = items.map(t=>`<li>⚠️ ${t}</li>`).join('');
+    newsUL.innerHTML = items.map(t=><li>⚠️ ${t}</li>).join('');
   }catch{ newsUL.innerHTML='<li>No feed offline.</li>'; }
 }
 fetchCalendar();
@@ -436,7 +427,7 @@ function buildAI(pair,dir,entry,tf='D',riskBal=10000){
     sma:sma.toFixed(4),rsi:rsi.toFixed(1),
     rr:(Math.abs((tgt-entry)/(entry-stop))).toFixed(2),
     confidence:prob,size,
-    note:`ATR ${atr.toFixed(4)} (${tf})`
+    note:ATR ${atr.toFixed(4)} (${tf})
   };
 }
 
@@ -461,21 +452,21 @@ function renderPortfolio(){
   positions.forEach(p=>{
     const livePL=((p.dir==='Buy'?p.current-p.entry:p.entry-p.current)*p.size).toFixed(2);
     saveTradeResult(p,livePL);   // learn
-    portGrid.insertAdjacentHTML('beforeend',`
+    portGrid.insertAdjacentHTML('beforeend',
       <div class="port-card">
         <h4>${p.pair}</h4>
         <div>Entry <span>${p.entry.toFixed(4)}</span></div>
         <div class="current">Current <span>${p.current.toFixed(4)}</span></div>
         <div>Size <span>${p.size.toLocaleString()}</span></div>
-        ${p.stop? `<div>Stop <span>${p.stop}</span></div>`:''}
-        ${p.target? `<div>Target <span>${p.target}</span></div>`:''}
-        ${p.rsi? `<div>RSI <span>${p.rsi}</span></div>`:''}
-        ${p.sma? `<div>SMA-20 <span>${p.sma}</span></div>`:''}
-        ${p.rr? `<div>R/R <span>${p.rr}</span></div>`:''}
-        ${p.confidence? `<div class="prob">Hit Prob: ${p.confidence}</div>`:''}
+        ${p.stop? <div>Stop <span>${p.stop}</span></div>:''}
+        ${p.target? <div>Target <span>${p.target}</span></div>:''}
+        ${p.rsi? <div>RSI <span>${p.rsi}</span></div>:''}
+        ${p.sma? <div>SMA-20 <span>${p.sma}</span></div>:''}
+        ${p.rr? <div>R/R <span>${p.rr}</span></div>:''}
+        ${p.confidence? <div class="prob">Hit Prob: ${p.confidence}</div>:''}
         <div class="pl"><b>P/L</b> <span style="color:${livePL>=0?'lime':'var(--down)'}">${livePL}</span></div>
-        ${p.note? `<div class="ai">${p.note}</div>`:''}
-      </div>`);}
+        ${p.note? <div class="ai">${p.note}</div>:''}
+      </div>);}
   );
   updateWinRate();
 }
@@ -507,7 +498,7 @@ const YF_SYMBOLS = {
 async function loadYahooData(){
   await Promise.all(Object.entries(YF_SYMBOLS).map(async ([yf,pair])=>{
     try{
-      const url=`https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d`;
+      const url=https://query1.finance.yahoo.com/v8/finance/chart/${yf}?range=3mo&interval=1d;
       const js = await fetch(url).then(r=>r.json());
       const res = js.chart.result[0];
       const close = res.indicators.quote[0].close.filter(n=>n);  // strip nulls
@@ -530,7 +521,7 @@ function loadMiniCharts() {
   document.querySelectorAll('.mini-chart').forEach(div => {
     const symbol = div.dataset.symbol || 'FX:EURUSD';
     const iframe = document.createElement('iframe');
-    iframe.src = `https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=15&theme=dark&style=2&hide_top_toolbar=1&hide_legend=1&save_image=0&studies=[]`;
+    iframe.src = https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=15&theme=dark&style=2&hide_top_toolbar=1&hide_legend=1&save_image=0&studies=[];
     iframe.width = '100%';
     iframe.height = '100';
     iframe.frameBorder = '0';
@@ -577,28 +568,28 @@ function updateMarketStatus() {
     if (localNow >= openTime && localNow < closeTime) {
       status = "Open";
       const diffMs = closeTime - localNow;
-      countdown = `${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until close`;
+      countdown = ${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until close;
     } else {
       status = "Closed";
       const nextOpen = localNow > closeTime ? new Date(openTime.setDate(openTime.getDate() + 1)) : openTime;
       const diffMs = nextOpen - localNow;
-      countdown = `${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until open`;
+      countdown = ${Math.floor(diffMs / 3600000)}h ${Math.floor((diffMs % 3600000) / 60000)}m until open;
     }
 
     const row = document.createElement("tr");
-    row.innerHTML = `
+    row.innerHTML = 
       <td>${market.name}</td>
       <td>${market.open}</td>
       <td>${market.close}</td>
       <td class="${status === 'Open' ? 'highlight' : ''}">${status}<br><small>${countdown}</small></td>
-    `;
+    ;
     tbody.appendChild(row);
   });
  
 
   // Update local time display
   const nowStr = new Date().toLocaleString("en-US", { timeZone: localTz, timeStyle: "medium", dateStyle: "full" });
-  document.querySelector('.market-time').textContent = `Local Time: ${nowStr}`;
+  document.querySelector('.market-time').textContent = Local Time: ${nowStr};
 }
 updateMarketStatus();
 setInterval(updateMarketStatus, 60000); // update every minu
