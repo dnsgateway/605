@@ -134,31 +134,7 @@
     </tbody>
   </table>
 </div>
-    <!-- ─────── Watchlist Module ─────── -->
-<section id="watchlist" class="page port-sim boxed">
-  <div class="port-header">
-    <h2>Paper Trade Watchlist</h2>
-    <p class="subline">Add any asset to monitor live paper trades</p>
-  </div>
-
-  <form id="watchlistForm" class="port-form">
-    <label>
-      Symbol (e.g. AAPL, EURUSD=X)
-      <input type="text" id="wlSymbol" placeholder="e.g. TSLA or EURUSD=X" required />
-    </label>
-    <label>
-      Entry Price
-      <input type="number" id="wlEntry" step="0.0001" required />
-    </label>
-    <label>
-      Quantity
-      <input type="number" id="wlQty" required />
-    </label>
-    <button type="submit">Add Trade</button>
-  </form>
-
-  <div id="watchlistTable" class="port-grid"></div>
-</section> 
+    
  <!-- 📈 STOCK PORTFOLIO SIMULATOR -->
 <!-- <section class="stock-sim">
   <h2>Stock Portfolio Simulator</h2>
@@ -238,6 +214,31 @@
   <span class="label-text">Neon Theme</span>
 </label>
     </section>
+      <!-- ─────── Watchlist Module ─────── -->
+<section id="watchlist" class="page port-sim boxed">
+  <div class="port-header">
+    <h2>Paper Trade Watchlist</h2>
+    <p class="subline">Add any asset to monitor live paper trades</p>
+  </div>
+
+  <form id="watchlistForm" class="port-form">
+    <label>
+      Symbol (e.g. AAPL, EURUSD=X)
+      <input type="text" id="wlSymbol" placeholder="e.g. TSLA or EURUSD=X" required />
+    </label>
+    <label>
+      Entry Price
+      <input type="number" id="wlEntry" step="0.0001" required />
+    </label>
+    <label>
+      Quantity
+      <input type="number" id="wlQty" required />
+    </label>
+    <button type="submit">Add Trade</button>
+  </form>
+
+  <div id="watchlistTable" class="port-grid"></div>
+</section> 
   </main>
 
   <!── bottom bar (mobile) ──>
